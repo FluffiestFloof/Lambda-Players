@@ -3,7 +3,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
     revolver = {
         model = "models/weapons/w_357.mdl",
         origin = "Half Life: 2",
-        prettyname = "357 Revolver",
+        prettyname = "357. Revolver",
         holdtype = "revolver",
         bonemerge = true,
         keepdistance = 500,

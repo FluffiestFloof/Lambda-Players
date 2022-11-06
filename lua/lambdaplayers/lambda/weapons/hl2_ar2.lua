@@ -22,7 +22,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadtime = 1.5,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 1,
-        reloadsounds = { { 0, "weapons/ar2/ar2_reload.wa" } },
+        reloadsounds = { { 0, "weapons/ar2/ar2_reload.wav" } },
 
         islethal = true,
     }
