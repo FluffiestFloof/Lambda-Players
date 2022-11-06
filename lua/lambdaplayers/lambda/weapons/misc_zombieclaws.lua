@@ -1,6 +1,6 @@
 local random = math.random
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
--- Missing leap attack
+-- Missing leap attack and HP on kill
 
     zombieclaws = {
         model = "models/hunter/plates/plate.mdl",
