@@ -25,35 +25,35 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
 
-                self.l_WeaponUseCooldown = CurTime() + 1
+            self.l_WeaponUseCooldown = CurTime() + 1
 
-                wepent:EmitSound( "Weapon_Shotgun.Single", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "Weapon_Shotgun.Single", 70, 100, 1, CHAN_WEAPON )
 
-                self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
-                self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
-                
-                self:HandleMuzzleFlash( 1 )
+            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
+            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
+            
+            self:HandleMuzzleFlash( 1 )
 
-                -- To simulate pump action after the shot
-                self:SimpleTimer(0.5, function()
-                    wepent:EmitSound( "Weapon_Shotgun.Special1", 70, 100, 1, CHAN_WEAPON )
-                    self:HandleShellEject( "ShotgunShellEject" )
-                end)
+            -- To simulate pump action after the shot
+            self:SimpleTimer(0.5, function()
+                wepent:EmitSound( "Weapon_Shotgun.Special1", 70, 100, 1, CHAN_WEAPON )
+                self:HandleShellEject( "ShotgunShellEject" )
+            end)
 
-                bullettbl.Attacker = self
-                bullettbl.Damage = 8
-                bullettbl.Force = 8
-                bullettbl.HullSize = 5
-                bullettbl.Num = 7
-                bullettbl.TracerName = tracer or "Tracer"
-                bullettbl.Dir = ( target:WorldSpaceCenter() - wepent:GetPos() ):GetNormalized()
-                bullettbl.Src = wepent:GetPos()
-                bullettbl.Spread = Vector( 0.1, 0.1, 0 )
-                bullettbl.IgnoreEntity = self
+            bullettbl.Attacker = self
+            bullettbl.Damage = 8
+            bullettbl.Force = 8
+            bullettbl.HullSize = 5
+            bullettbl.Num = 7
+            bullettbl.TracerName = tracer or "Tracer"
+            bullettbl.Dir = ( target:WorldSpaceCenter() - wepent:GetPos() ):GetNormalized()
+            bullettbl.Src = wepent:GetPos()
+            bullettbl.Spread = Vector( 0.1, 0.1, 0 )
+            bullettbl.IgnoreEntity = self
 
-                self.l_Clip = self.l_Clip - 1
+            self.l_Clip = self.l_Clip - 1
 
-                wepent:FireBullets( bullettbl )
+            wepent:FireBullets( bullettbl )
             
             return true
         end,
