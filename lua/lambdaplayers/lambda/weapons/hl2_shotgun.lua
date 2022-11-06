@@ -1,7 +1,7 @@
 local CurTime = CurTime
+local random = math.random
 local bullettbl = {}
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Missing double barrel secondary attack
 
     shotgun = {
         model = "models/weapons/w_shotgun.mdl",
@@ -25,35 +25,47 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
 
-            self.l_WeaponUseCooldown = CurTime() + 1
+            -- Special double shot
+            if math.random(6) == 1 and self.l_Clip >= 2 and self:GetRangeSquaredTo(target) <= (400 * 400) then
+                self.l_WeaponUseCooldown = CurTime() + random(1.25, 1.5)
 
-            wepent:EmitSound( "Weapon_Shotgun.Single", 70, 100, 1, CHAN_WEAPON )
+                wepent:EmitSound( "Weapon_Shotgun.Double", 70, 100, 1, CHAN_WEAPON )
 
-            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
-            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
+                bullettbl.Num = 12
+
+                self.l_Clip = self.l_Clip - 2
+            else
+                self.l_WeaponUseCooldown = CurTime() + random(1, 1.25)
+
+                wepent:EmitSound( "Weapon_Shotgun.Single", 70, 100, 1, CHAN_WEAPON )
+
+                bullettbl.Num = 7
+
+                self.l_Clip = self.l_Clip - 1
+            end
             
-            self:HandleMuzzleFlash( 1 )
-
-            -- To simulate pump action after the shot
-            self:SimpleTimer(0.5, function()
-                wepent:EmitSound( "Weapon_Shotgun.Special1", 70, 100, 1, CHAN_WEAPON )
-                self:HandleShellEject( "ShotgunShellEject" )
-            end)
-
             bullettbl.Attacker = self
             bullettbl.Damage = 8
             bullettbl.Force = 8
             bullettbl.HullSize = 5
-            bullettbl.Num = 7
             bullettbl.TracerName = tracer or "Tracer"
             bullettbl.Dir = ( target:WorldSpaceCenter() - wepent:GetPos() ):GetNormalized()
             bullettbl.Src = wepent:GetPos()
             bullettbl.Spread = Vector( 0.1, 0.1, 0 )
             bullettbl.IgnoreEntity = self
 
-            self.l_Clip = self.l_Clip - 1
+            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
+            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SHOTGUN )
+            
+            self:HandleMuzzleFlash( 1 )
 
             wepent:FireBullets( bullettbl )
+
+            -- To simulate pump action after the shot
+            self:SimpleTimer(0.5, function()
+                wepent:EmitSound( "Weapon_Shotgun.Special1", 70, 100, 1, CHAN_WEAPON )
+                self:HandleShellEject( "ShotgunShellEject" )
+            end)
             
             return true
         end,
