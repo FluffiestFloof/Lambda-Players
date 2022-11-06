@@ -45,8 +45,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self:AddGesture( ACT_GMOD_GESTURE_RANGE_ZOMBIE )
             
             -- To make sure damage syncs with the animation
-            timer.Simple(0.75, function()
-                if !IsValid(self) or self:GetIsDead() or !IsValid(target) then return end
+            self:SimpleTimer(0.75, function()
                 if self:GetRangeTo(target) > (65) then wepent:EmitSound("npc/zombie/claw_miss"..random(2)..".wav", 70) return end
                 
                 local dmg = random(35,55)
