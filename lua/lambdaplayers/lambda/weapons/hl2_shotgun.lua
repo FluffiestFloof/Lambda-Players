@@ -1,7 +1,7 @@
 local CurTime = CurTime
 local bullettbl = {}
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Missing double barrel secondary attack and proper reload
+--Missing double barrel secondary attack
 
     shotgun = {
         model = "models/weapons/w_shotgun.mdl",
