@@ -12,9 +12,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         clip = 20,
         tracername = "Tracer",
-        damage = 6, -- 3 to 10
+        damage = 6, -- 3 to 10 (zeta)
         spread = 0.16,
-        rateoffire = 0.4, -- 0.15 to 0.6
+        rateoffire = 0.4, -- 0.15 to 0.6 (zeta)
         muzzleflash = 1,
         shelleject = "ShellEject",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,

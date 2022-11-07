@@ -13,10 +13,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 500,
 
         clip = 6,
-        bulletcount = 7,
-        tracername = "Tracer",
-        damage = 8,
-        spread = 0.1,
 
         reloadtime = 3,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
