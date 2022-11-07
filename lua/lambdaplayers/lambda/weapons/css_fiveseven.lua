@@ -1,5 +1,4 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Random dmg / rof
 
     fiveseven = {
         model = "models/weapons/w_pist_fiveseven.mdl",
@@ -7,14 +6,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Five-Seven",
         holdtype = "pistol",
         bonemerge = true,
-        keepdistance = 350,
-        attackrange = 2100,
+        keepdistance = 400,
+        attackrange = 2500,
 
         clip = 20,
         tracername = "Tracer",
-        damage = 6, -- 3 to 10 (zeta)
-        spread = 0.16,
-        rateoffire = 0.4, -- 0.15 to 0.6 (zeta)
+        damage = 9,
+        spread = 0.12,
+        rateoffire = 0.2,
         muzzleflash = 1,
         shelleject = "ShellEject",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,

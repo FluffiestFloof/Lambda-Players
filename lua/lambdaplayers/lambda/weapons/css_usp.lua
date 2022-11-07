@@ -1,6 +1,9 @@
+local random = math.random
+local CurTime = CurTime
+local silenced = false
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --Allow Lambda to attach silencer on spawn randomly
---Random dmg / rof
 
     usp = {
         model = "models/weapons/w_pist_usp.mdl",
@@ -13,9 +16,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         clip = 12,
         tracername = "Tracer",
-        damage = 5, --6 - 17 (zeta)
-        spread = 0.145,
-        rateoffire = 0.2, --0.16 - 0.23 (zeta)
+        damage = 10,
+        spread = 0.14,
+        rateoffire = 0.18,
         muzzleflash = 1,
         shelleject = "ShellEject",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,

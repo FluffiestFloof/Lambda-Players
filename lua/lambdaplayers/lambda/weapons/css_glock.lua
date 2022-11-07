@@ -1,6 +1,9 @@
+local random = math.random
+local CurTime = CurTime
+local burst = false
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --Make random between burst or single shot on spawn
---Random dmg / rof
 
     glock = {
         model = "models/weapons/w_pist_glock18.mdl",
@@ -13,9 +16,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         clip = 20,
         tracername = "Tracer",
-        damage = 5, --4 to 8 (zeta)
-        spread = 0.15,
-        rateoffire = 0.2, --0.08 to 0.28 (zeta)
+        damage = 7,
+        spread = 0.16,
+        rateoffire = 0.15,
         muzzleflash = 1,
         shelleject = "ShellEject",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,
