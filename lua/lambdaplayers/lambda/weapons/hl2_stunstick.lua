@@ -35,7 +35,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         rateoffire = 0.8,
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,
         attacksnd = "Weapon_StunStick.Swing",
-        hitsnd = "weapons/stunstick/stunstick_fleshhit*2*.wav",
+        hitsnd = "Weapon_StunStick.Melee_Hit",
         
         -- Emit sparks on hit
         callback = function( self, wepent, target )
