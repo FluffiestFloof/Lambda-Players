@@ -1,5 +1,6 @@
 local CurTime = CurTime
 local random = math.random
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     grenade = {

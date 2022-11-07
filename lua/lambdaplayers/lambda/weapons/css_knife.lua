@@ -1,5 +1,6 @@
 local random = math.random
 local CurTime = CurTime
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 -- Missing firstSwing to simulate CSS knife better.
 

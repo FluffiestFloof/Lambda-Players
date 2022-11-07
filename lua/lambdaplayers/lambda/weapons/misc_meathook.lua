@@ -1,6 +1,7 @@
 local random = math.random
 local CurTime = CurTime
 local Rand = math.Rand
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     meathook = {

@@ -1,6 +1,7 @@
 local util_Effect = util.Effect
 local random = math.random
 local stunstickGlow = Material("effects/blueflare1")
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     stunstick = {

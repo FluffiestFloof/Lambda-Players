@@ -1,6 +1,7 @@
 local CurTime = CurTime
 local random = math.random
 local bullettbl = {}
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --Missing random and proper muzzleflash/shell ejection
 --Random dmg / rof

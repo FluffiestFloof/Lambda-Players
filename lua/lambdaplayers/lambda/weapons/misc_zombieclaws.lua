@@ -2,6 +2,7 @@ local random = math.random
 local math_min = math.min
 local CurTime = CurTime
 local Rand = math.Rand
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 -- Missing leap attack and HP on kill
 
