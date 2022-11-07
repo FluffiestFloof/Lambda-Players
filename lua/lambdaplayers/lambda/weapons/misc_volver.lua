@@ -1,10 +1,10 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --idk trying something
 
-    medkit = {
+    volver = {
         model = "models/weapons/w_medkit.mdl",
         origin = "Misc",
-        prettyname = "Medkit",
+        prettyname = "Volver",
         holdtype = "slam",
 
         islethal = false,

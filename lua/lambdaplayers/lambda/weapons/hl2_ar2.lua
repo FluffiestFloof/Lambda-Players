@@ -1,5 +1,5 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
--- Missing secondary plasma ball attack
+-- Missing secondary energy ball attack
 
     ar2 = {
         model = "models/weapons/w_irifle.mdl",
