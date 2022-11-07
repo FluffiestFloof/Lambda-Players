@@ -16,15 +16,13 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         reloadtime = 1.8,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        reloadanimationspeed = 1,
+        reloadanimationspeed = 1.2,
         reloadsounds = { 
-            { 1, "weapons/crossbow/bolt_load"..random(2)..".wav" } 
+            { 0.9, "weapons/crossbow/bolt_load"..random(2)..".wav" } 
         },
 
         callback = function( self, wepent, target )
-            if self.l_Clip <= 0 then self:ReloadWeapon() return end
-            
-            self.l_WeaponUseCooldown = CurTime() + 1.2
+            self.l_WeaponUseCooldown = CurTime() + 2
 
             wepent:EmitSound( "weapons/crossbow/bolt_fly4.wav", 70, random(90,100), 1, CHAN_WEAPON )
 
@@ -50,7 +48,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     
                     local dmg = DamageInfo()
                     dmg:SetDamage( 100 )
-                    dmg:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * 100 )
                     dmg:SetDamageType( bit.bor(DMG_BULLET, DMG_NEVERGIB) )
                     dmg:SetAttacker( self or bolt )
                     dmg:SetInflictor( bolt )
@@ -59,6 +56,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             end
 
             self.l_Clip = self.l_Clip - 1
+
+            --Reload right after they shoot
+            if self.l_Clip <= 0 then self:ReloadWeapon() return end
             
             return true
         end,
