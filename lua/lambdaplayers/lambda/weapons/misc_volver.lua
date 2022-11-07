@@ -33,12 +33,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             wepent:SetModelScale(1, 0.00000001)
         end,
 
-        --[[Draw = function( lambda, wepent )
-            if IsValid( wepent ) then
-                wepent:SetModelScale(wepent:GetModelScale() * 5, 0.000001)
-            end
-        end,]]
-
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
 
