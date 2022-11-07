@@ -26,8 +26,16 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadsounds = { 
             { 0, "Weapon_M4A1.Clipout" },
             { 1.4, "Weapon_M4A1.Clipin" },
-            { 2.5, "Weapon_M4A1.Boltpull" },
+            { 2.5, "Weapon_M4A1.Boltpull" }
         },
+
+        OnEquip = function( lambda, wepent )
+            wepent:EmitSound( "Weapon_M4A1.Deploy", 70, 100, 1, CHAN_WEAPON )
+            lambda:SimpleTimer(0.4, function()
+                if !IsValid( wepent ) then return false end
+                wepent:EmitSound( "Weapon_M4A1.Boltpull", 70, 100, 1, CHAN_WEAPON )
+            end)
+        end,
 
         islethal = true,
     }

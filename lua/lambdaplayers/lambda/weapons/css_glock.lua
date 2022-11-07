@@ -30,6 +30,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             { 2, "Weapon_Glock.Sliderelease" }
         },
 
+        OnEquip = function( lambda, wepent )
+            wepent:EmitSound( "Weapon_Glock.Slideback", 70, 100, 1, CHAN_WEAPON )
+        end,
+
         islethal = true,
     }
 

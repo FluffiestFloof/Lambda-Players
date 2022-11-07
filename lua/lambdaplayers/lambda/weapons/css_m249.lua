@@ -1,4 +1,3 @@
-local random = math.random
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --Real CSS reload time?
 --Do random on pew pew

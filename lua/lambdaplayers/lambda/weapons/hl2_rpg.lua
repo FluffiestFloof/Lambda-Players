@@ -9,53 +9,44 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "RPG",
         holdtype = "rpg",
         bonemerge = true,
-        keepdistance = 400,
-        attackrange = 3500,
+        keepdistance = 800,
+        attackrange = 5000,
 
         clip = 1,
 
-        reloadtime = 1.8,
-        reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+        reloadtime = 3,
+        reloadanim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         reloadanimationspeed = 1,
-        reloadsounds = { {0, "Weapon_Crossbow.Reload"}, {1, "Weapon_Crossbow.BoltElectrify"} },
+        reloadsounds = { },
 
         callback = function( self, wepent, target )
-            if self.l_Clip <= 0 then self:ReloadWeapon() return end
-            self.l_WeaponUseCooldown = CurTime() + 1.2
+            if self.l_Clip <= 0 then self:ReloadWeapon() return end-- Just in case
+            
+            self.l_WeaponUseCooldown = CurTime() + 3
 
-            wepent:EmitSound( "Weapon_Crossbow.Single", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "Weapon_RPG.Single", 70, 100, 1, CHAN_WEAPON )
 
-            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
-            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
+            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
+            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
 
-            local dir = (target:GetCenteroid() - wepent:GetPos() + Vector(random(-40,40),0,random(-50,50))):Angle()
-    
-            local bolt = ents.Create("crossbow_bolt")
-            bolt:SetPos( self:GetCenteroid() + dir:Forward() * 64)
-            bolt:SetAngles(dir)
-            bolt:Spawn()
-            bolt:Activate()
-            bolt:SetVelocity( dir:Forward() * (self:WaterLevel() == 3 and 1500 or 2500) )
-
-            local flySnd = CreateSound( bolt, "Weapon_Crossbow.BoltFly" )
-            if flySnd then flySnd:Play() end
-            bolt:CallOnRemove("lambdaplayer_crossbowbolt_"..bolt:EntIndex(), function()                    
-                if flySnd then flySnd:Stop() end
-
-                local find = FindInSphereFilt(bolt:GetPos(), 2, function(ent)
-                    return (ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer())
-                end)
-                if !IsValid(find[1]) then return end
+            local rocket = ents.Create( "rpg_missile" )
+            if IsValid( rocket ) then
+                rocket:SetPos( wepent:GetAttachment(2).Pos + wepent:GetAttachment(2).Ang:Forward() * 100 + Vector(0,0,15) )
+                rocket:SetAngles( (target:GetPos() + target:OBBCenter() - wepent:GetPos()):Angle() )
+                rocket:SetOwner( self )
+                rocket:SetCollisionGroup( COLLISION_GROUP_DEBRIS )-- SetOwner should prevent collision but it doesn't
+                rocket:Spawn()
                 
-                local dmg = DamageInfo()
-                dmg:SetDamage(100)
-                dmg:SetDamageType(bit.bor(DMG_BULLET, DMG_NEVERGIB))
-                dmg:SetAttacker(self or bolt)
-                dmg:SetInflictor(bolt)
-                find[1]:TakeDamageInfo(dmg)
-            end)
+                self:SimpleTimer(0.3, function()-- Grace period to avoid self kills on collision
+                    if !IsValid( rocket ) then return false end
+                    rocket:SetCollisionGroup( COLLISION_GROUP_PROJECTILE )
+                end)
 
-            self.l_Clip = self.l_Clip - 1
+                rocket:CallOnRemove( "lambdaplayer_rpgrocket_"..rocket:EntIndex(), function()
+                    rocket:StopSound( "weapons/rpg/rocket1.wav" )
+                    util.BlastDamage( rocket, (self:IsValid()) and self or rocket, rocket:GetPos(), 260, 210)
+                end)
+            end
             
             return true
         end,

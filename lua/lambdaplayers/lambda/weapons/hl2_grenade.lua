@@ -20,13 +20,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end-- Just in case
-            local throwforce = 1200
-            local normal = self:GetForward()
 
             self.l_WeaponUseCooldown = CurTime() + 1.5
 
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
+
+            local throwforce = 1200
+            local normal = self:GetForward()
 
             if IsValid( target ) and self:GetRangeSquaredTo( target ) < (400 * 400) then
                 throwforce = 400
@@ -35,17 +36,17 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 normal = ( target:GetPos() - self:GetPos() ):Angle():Forward()
             end
 
-            local grenade = ents.Create("npc_grenade_frag")
-            grenade:SetPos(self:GetPos()+Vector(0,0,60)+self:GetForward()*40+self:GetRight()*-10)
-            grenade:Fire("SetTimer",3,0)
+            local grenade = ents.Create( "npc_grenade_frag" )
+            grenade:SetPos( self:GetPos() + Vector(0,0,60) + self:GetForward() * 40 + self:GetRight() * -10 )
+            grenade:Fire( "SetTimer", 3, 0 )
             grenade:SetSaveValue( "m_hThrower", self )
             grenade:SetOwner( self )
             grenade:Spawn()
             grenade:SetHealth( 99999 )
             local frag = grenade:GetPhysicsObject()
-            if IsValid(frag) then
+            if IsValid( frag ) then
                 frag:ApplyForceCenter( normal * throwforce )
-                frag:AddAngleVelocity(Vector(200,random(-600,600),0))
+                frag:AddAngleVelocity( Vector(200,random(-600,600),0) )
             end
             
             return true
