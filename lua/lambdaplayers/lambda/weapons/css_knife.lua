@@ -33,7 +33,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             if backstabCheck.y < -30 and backstabCheck.y > -140 then
                 isBackstab = true
                 dmg = 195
-                target:EmitSound( "Weapon_Knife.Stab", 80)
+                target:EmitSound( "weapons/knife/knife_stab.wav", 80)
             end
 
             local dmginfo = DamageInfo() 
