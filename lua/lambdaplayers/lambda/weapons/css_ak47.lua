@@ -1,29 +1,32 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
--- TODO
 
     ak47 = {
-        model = "models/weapons/w_smg1.mdl",
+        model = "models/weapons/w_rif_ak47.mdl",
         origin = "Counter Strike: Source",
-        prettyname = "MP7",
-        holdtype = "smg",
+        prettyname = "AK47",
+        holdtype = "ar2",
         bonemerge = true,
-        keepdistance = 300,
-        attackrange = 1500,
+        keepdistance = 400,
+        attackrange = 2100,
 
-        clip = 45,
+        clip = 30,
         tracername = "Tracer",
-        damage = 5,
-        spread = 0.2,
-        rateoffire = 0.065,
+        damage = 9, -- 8 to 13
+        spread = 0.13,
+        rateoffire = 0.13,
         muzzleflash = 1,
-        shelleject = "ShellEject",
-        attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1,
-        attacksnd = "Weapon_SMG1.Single",
+        shelleject = "RifleShellEject",
+        attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
+        attacksnd = "Weapon_AK47.Single",
 
-        reloadtime = 1.6,
-        reloadanim = ACT_HL2MP_GESTURE_RELOAD_SMG1,
-        reloadanimationspeed = 1,
-        reloadsounds = { { 0, "Weapon_SMG1.Reload" } },
+        reloadtime = 2,
+        reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
+        reloadanimationspeed = 0.9,
+        reloadsounds = { 
+            { 0, "Weapon_AK47.Clipout" },
+            { 0.8, "Weapon_AK47.Clipin" },
+            { 1.5, "Weapon_AK47.BoltPull" }
+        },
 
         islethal = true,
     }

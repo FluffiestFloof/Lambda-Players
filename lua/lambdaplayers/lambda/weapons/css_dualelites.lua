@@ -1,11 +1,11 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 -- TODO
 
-    glock = {
+    dualelites = {
         model = "models/weapons/w_pistol.mdl",
         origin = "Counter Strike: Source",
-        prettyname = "Glock",
-        holdtype = "pistol",
+        prettyname = "Dual",
+        holdtype = "duel",
         bonemerge = true,
         keepdistance = 350,
         attackrange = 2000,

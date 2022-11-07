@@ -4,7 +4,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
     m4a1 = {
         model = "models/weapons/w_smg1.mdl",
         origin = "Counter Strike: Source",
-        prettyname = "MP7",
+        prettyname = "M4A1",
         holdtype = "smg",
         bonemerge = true,
         keepdistance = 300,
