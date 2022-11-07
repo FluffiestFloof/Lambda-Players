@@ -2,7 +2,7 @@ local CurTime = CurTime
 local random = math.random
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
-    frag = {
+    grenade = {
         model = "models/weapons/w_grenade.mdl",
         origin = "Half Life: 2",
         prettyname = "Grenade",
