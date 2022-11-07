@@ -1,5 +1,5 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Redo
+--Redo reload
 --Random dmg
 
     ak47 = {

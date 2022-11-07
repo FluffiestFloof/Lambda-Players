@@ -19,7 +19,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         muzzleflash = 1,
         shelleject = "ShellEject",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
-        attacksnd = "Weapon_M4A1.Single",
+        attacksnd = "Weapon_M4A1.Single", --Weapon_M4A1.Silenced
+        --Weapon_M4A1.Silencer_On
 
         reloadtime = 3.1,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,

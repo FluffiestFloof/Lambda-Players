@@ -8,10 +8,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Glock 18",
         holdtype = "pistol",
         bonemerge = true,
-        keepdistance = 350,
+        keepdistance = 325,
         attackrange = 2000,
 
-        clip = 1,
+        clip = 20,
         tracername = "Tracer",
         damage = 5, --4 to 8 (zeta)
         spread = 0.15,
