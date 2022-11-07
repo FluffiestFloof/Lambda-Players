@@ -16,7 +16,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadtime = 1.8,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 1,
-        reloadsounds = { {0, "Weapon_Crossbow.Reload"}, {1, "Weapon_Crossbow.BoltElectrify"} },
+        reloadsounds = { 
+            { 0, "Weapon_Crossbow.Reload" }, 
+            { 1, "Weapon_Crossbow.BoltElectrify"} 
+        },
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end

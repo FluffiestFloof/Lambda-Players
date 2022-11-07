@@ -24,10 +24,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         reloadanimationspeed = 0.85,
         reloadsounds = { 
-            { 0, 'Weapon_Glock.Slideback'},
-            { 0.4, 'Weapon_Glock.Clipout'},
-            { 1.3, 'Weapon_Glock.Clipin'},
-            { 2, 'Weapon_Glock.Sliderelease'}
+            { 0, "Weapon_Glock.Slideback" },
+            { 0.4, "Weapon_Glock.Clipout" },
+            { 1.3, "Weapon_Glock.Clipin" },
+            { 2, "Weapon_Glock.Sliderelease" }
         },
 
         islethal = true,

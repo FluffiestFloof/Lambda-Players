@@ -24,9 +24,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 0.65,
         reloadsounds = { 
-            {0, 'Weapon_M4A1.Clipout'},
-            {1.4, 'Weapon_M4A1.Clipin'},
-            {2.5, 'Weapon_M4A1.Boltpull'},
+            { 0, "Weapon_M4A1.Clipout" },
+            { 1.4, "Weapon_M4A1.Clipin" },
+            { 2.5, "Weapon_M4A1.Boltpull" },
         },
 
         islethal = true,

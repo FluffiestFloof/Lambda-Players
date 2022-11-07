@@ -28,10 +28,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadanimationspeed = 0.6,
         reloadsounds = { 
             { 0, "Weapon_M249.Coverup" }, 
-            { 0.4, "Weapon_M249.Boxout"},
-            { 1.6, "Weapon_M249.Boxin"},
-            { 2.2, "Weapon_M249.Chain"},
-            { 3, "Weapon_M249.Coverdown"}
+            { 0.4, "Weapon_M249.Boxout" },
+            { 1.6, "Weapon_M249.Boxin" },
+            { 2.2, "Weapon_M249.Chain" },
+            { 3, "Weapon_M249.Coverdown" }
         },
 
         islethal = true,
