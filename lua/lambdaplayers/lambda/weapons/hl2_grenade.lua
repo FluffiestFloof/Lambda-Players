@@ -40,8 +40,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             grenade:Fire("SetTimer",3,0)
             grenade:SetSaveValue( "m_hThrower", self )
             grenade:SetOwner( self )
-            grenade:SetHealth( 99999 )
             grenade:Spawn()
+            grenade:SetHealth( 99999 )
             local frag = grenade:GetPhysicsObject()
             if IsValid(frag) then
                 frag:ApplyForceCenter( normal * throwforce )
