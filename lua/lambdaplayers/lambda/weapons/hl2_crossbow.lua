@@ -26,7 +26,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             
             self.l_WeaponUseCooldown = CurTime() + 1.2
 
-            wepent:EmitSound( "weapons/crossbow/fire1.wav", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/crossbow/bolt_fly4.wav", 70, random(90,100), 1, CHAN_WEAPON )
 
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
@@ -41,10 +41,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 bolt:Activate()
                 bolt:SetVelocity( dir:Forward() * (self:WaterLevel() == 3 and 1500 or 2500) )
 
-                local flySnd = CreateSound( bolt, "weapons/crossbow/bolt_fly4.wav" )
-                if flySnd then flySnd:Play() end
                 bolt:CallOnRemove( "lambdaplayer_crossbowbolt_"..bolt:EntIndex(), function()                    
-                    if flySnd then flySnd:Stop() end
 
                     local find = FindInSphereFilt(bolt:GetPos(), 2, function( ent )
                         return (ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer())

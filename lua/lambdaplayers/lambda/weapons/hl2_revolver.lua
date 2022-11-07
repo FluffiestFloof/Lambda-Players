@@ -1,5 +1,3 @@
-local random = math.random
-
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     revolver = {
@@ -19,7 +17,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         muzzleflash = 1,
         shelleject = "none",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_REVOLVER,
-        attacksnd = "weapons/357/357_fire2.wav",
+        attacksnd = "Weapon_357.Single",
 
         reloadtime = 3,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,

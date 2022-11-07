@@ -17,8 +17,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         damage = 10,
         rateoffire = 0.8,
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE,
-        attacksnd = "weapons/stunstick/stunstick_swing*2*.wav",
-        hitsnd = "weapons/stunstick/stunstick_fleshhit*2*.wav",
+        attacksnd = "Weapon_StunStick.Swing",
+        hitsnd = "Weapon_StunStick.Melee_Hit",
         
         -- Custom effect similar to player stunstick
         Draw = function( lambda, wepent )
@@ -35,7 +35,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         end,
         
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "weapons/stunstick/spark"..random(2)..".wav" )
+            wepent:EmitSound( "weapons/stunstick/spark"..random(2)..".wav", 70, random(98,102), 1, CHAN_WEAPON )
         end,
         
         -- Emit sparks on hit

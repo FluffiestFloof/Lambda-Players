@@ -26,7 +26,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             if math.random(6) == 1 and self.l_Clip >= 2 and self:GetRangeSquaredTo(target) <= (400 * 400) then
                 self.l_WeaponUseCooldown = CurTime() + random(1.2, 1.5)
 
-                wepent:EmitSound( "weapons/shotgun/shotgun_dbl_fire7.wav", 70, 100, 1, CHAN_WEAPON )
+                wepent:EmitSound( "weapons/shotgun/shotgun_dbl_fire7.wav", 70, random(90,95), 1, CHAN_WEAPON )
 
                 bullettbl.Num = 12
 
@@ -34,7 +34,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             else
                 self.l_WeaponUseCooldown = CurTime() + random(1, 1.25)
 
-                wepent:EmitSound( "weapons/shotgun/shotgun_fire7.wav", 70, 100, 1, CHAN_WEAPON )
+                wepent:EmitSound( "weapons/shotgun/shotgun_fire7.wav", 70, random(98,101), 1, CHAN_WEAPON )
 
                 bullettbl.Num = 7
 

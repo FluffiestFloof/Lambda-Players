@@ -14,11 +14,11 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         tracername = "AR2Tracer",
         damage = 8,
         spread = 0.1,
-        rateoffire = 0.12,
+        rateoffire = 0.10,
         muzzleflash = 1,
         shelleject = "none",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
-        attacksnd = "weapons/ar2/fire1.wav",
+        attacksnd = "Weapon_AR2.Single",
 
         reloadtime = 1.5,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,

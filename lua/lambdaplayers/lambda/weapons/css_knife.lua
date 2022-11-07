@@ -15,7 +15,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 50,
         
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "weapons/knife/knife_deploy1.wav" )
+            wepent:EmitSound( "weapons/knife/knife_deploy1.wav", 70, random(95,105), 1, CHAN_WEAPON  )
         end,
 
         callback = function( self, wepent, target )
@@ -33,7 +33,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             if backstabCheck.y < -30 and backstabCheck.y > -140 then
                 isBackstab = true
                 dmg = 195
-                target:EmitSound( "weapons/knife/knife_stab.wav", 80)
+                target:EmitSound( "weapons/knife/knife_stab.wav", 80, random(95,105), 1, CHAN_WEAPON )
             end
 
             local dmginfo = DamageInfo() 
