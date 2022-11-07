@@ -19,7 +19,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadsounds = { },
 
         callback = function( self, wepent, target )
-            if self.l_Clip <= 0 then self:ReloadWeapon() return end-- Just in case but technically can't empty clip
+            if self.l_Clip <= 0 then self:ReloadWeapon() return end-- Just in case
             local throwforce = 1200
             local normal = self:GetForward()
 

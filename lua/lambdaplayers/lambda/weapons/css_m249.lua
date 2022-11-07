@@ -1,5 +1,7 @@
 local random = math.random
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
+--Real CSS reload time?
+--Do random on pew pew
 
     m249 = {
         model = "models/weapons/w_mach_m249para.mdl",

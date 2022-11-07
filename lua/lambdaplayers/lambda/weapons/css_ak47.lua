@@ -1,4 +1,6 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
+--Real CSS reload time?
+--Do random on pew pew
 
     ak47 = {
         model = "models/weapons/w_rif_ak47.mdl",

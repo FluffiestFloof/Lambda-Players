@@ -19,14 +19,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_PISTOL,
         attacksnd = "Weapon_FiveSeven.Single",
 
-        reloadtime = 1.5,
+        reloadtime = 2.7,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
-        reloadanimationspeed = 1,
+        reloadanimationspeed = 0.65,
         reloadsounds = { 
             {0, 'Weapon_FiveSeven.Slideback'},
-            {0.4, 'Weapon_FiveSeven.Clipout'},
-            {0.9, 'Weapon_FiveSeven.Clipin'},
-            {1.5, 'Weapon_FiveSeven.Sliderelease'}
+            {0.6, 'Weapon_FiveSeven.Clipout'},
+            {1.8, 'Weapon_FiveSeven.Clipin'},
+            {2.5, 'Weapon_FiveSeven.Sliderelease'}
         },
 
         islethal = true,
