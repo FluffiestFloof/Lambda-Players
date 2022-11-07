@@ -10,20 +10,9 @@ if SERVER then
         ErrorNoHaltWithStack( "WARNING! ", self:GetLambdaName(), " was killed on a engine level! This should never happen!" )
     end
 
-
-    function ENT:OnTraceAttack( info, dir, trace )
-        local potentialdeath = ( self:Health() - info:GetDamage() ) <= 0
-        if self:GetRespawn() and potentialdeath then
-            info:SetDamageBonus( 0 )
-            info:SetBaseDamage( 0 )
-            info:SetDamage( 0 )
-            self:LambdaOnKilled( info )
-        end
-    end
-
     function ENT:LambdaOnKilled( info )
         if self:GetIsDead() then return end
-
+        self:DebugPrint( "was killed by ", info:GetAttacker() )
         self:PlaySoundFile( "vo/npc/male01/pain0" .. random( 1, 9 ) .. ".wav" )
 
         self:SetIsDead( true )
@@ -61,11 +50,6 @@ if SERVER then
             self:SimpleTimer( 0.1, function() self:Remove() end, true )
         end
 
-    end
-
-    function ENT:OnRemove()
-        self:RemoveTimers()
-        self:CleanSpawnedEntities()
     end
 
     function ENT:OnInjured( info )
@@ -167,6 +151,18 @@ end
 
 ------ SHARED ------
 
+function ENT:OnRemove()
+    if SERVER then
+        self:RemoveTimers()
+        self:CleanSpawnedEntities()
+    elseif CLIENT then
+        if IsValid( self.l_flashlight ) then
+            self.l_flashlight:Remove()
+        end
+    end
+    
+end
+
 -- A function for holding self:Hook() functions. Called in the ENT:Initialize() in npc_lambdaplayer
 function ENT:InitializeMiniHooks()
 
@@ -187,6 +183,7 @@ function ENT:InitializeMiniHooks()
                 return true
             end
         
+
         end, true )
 
         self:Hook( "OnEntityCreated", "NPCRelationshipHandle", function( ent )
