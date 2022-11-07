@@ -15,7 +15,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 50,
         
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "Weapon_Knife.Deploy" )
+            wepent:EmitSound( "weapons/knife/knife_deploy1.wav", 70, random(95,105), 1, CHAN_WEAPON  )
         end,
 
         callback = function( self, wepent, target )
@@ -29,11 +29,11 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_KNIFE )
             
-            wepent:EmitSound( "Weapon_Knife.Slash", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/knife/knife_slash"..random(2)..".wav", 70, 100, 1, CHAN_WEAPON )
             if backstabCheck.y < -30 and backstabCheck.y > -140 then
                 isBackstab = true
                 dmg = 195
-                target:EmitSound( "Weapon_Knife.Stab", 80)
+                target:EmitSound( "weapons/knife/knife_stab.wav", 80, random(95,105), 1, CHAN_WEAPON )
             end
 
             local dmginfo = DamageInfo() 
@@ -44,7 +44,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             dmginfo:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * dmg )
 
             self.l_WeaponUseCooldown = CurTime() + (isBackstab and 1.0 or 0.5)
-            target:EmitSound( "Weapon_Knife.Hit", 70 )
+            target:EmitSound( "weapons/knife/knife_hit"..random(4)..".wav", 70 )
 
             target:TakeDamageInfo( dmginfo )
 

@@ -35,7 +35,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         end,
         
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "Weapon_StunStick.Activate" )
+            wepent:EmitSound( "weapons/stunstick/spark"..random(2)..".wav", 70, random(98,102), 1, CHAN_WEAPON )
         end,
         
         -- Emit sparks on hit

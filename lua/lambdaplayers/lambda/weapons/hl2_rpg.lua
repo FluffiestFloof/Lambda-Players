@@ -25,7 +25,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             
             self.l_WeaponUseCooldown = CurTime() + 3
 
-            wepent:EmitSound( "Weapon_RPG.Single", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/rpg/rocketfire1.wav", 70, 100, 1, CHAN_WEAPON )
 
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
