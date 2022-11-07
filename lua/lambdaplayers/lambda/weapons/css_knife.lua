@@ -3,7 +3,7 @@ local CurTime = CurTime
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 -- Missing firstSwing to simulate CSS knife better.
 
-    css_knife = {
+    knife = {
         model = "models/weapons/w_knife_t.mdl",
         origin = "Counter Strike: Source",
         prettyname = "Knife",
