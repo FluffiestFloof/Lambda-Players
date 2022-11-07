@@ -1,5 +1,4 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
--- TODO
 
     deagle = {
         model = "models/weapons/w_pist_deagle.mdl",

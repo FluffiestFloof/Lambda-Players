@@ -1,6 +1,6 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Real CSS reload time?
---Do random on pew pew
+--Redo
+--Random dmg
 
     ak47 = {
         model = "models/weapons/w_rif_ak47.mdl",
@@ -29,6 +29,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             { 0.8, "Weapon_AK47.Clipin" },
             { 1.5, "Weapon_AK47.BoltPull" }
         },
+
+        OnEquip = function( lambda, wepent )
+            wepent:EmitSound( "Weapon_AK47.BoltPull", 70, 100, 1, CHAN_WEAPON )
+        end,
 
         islethal = true,
     }

@@ -1,7 +1,6 @@
 local CurTime = CurTime
 local random = math.random
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
--- TODO
 
     rpg = {
         model = "models/weapons/w_rocket_launcher.mdl",

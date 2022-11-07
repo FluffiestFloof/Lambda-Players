@@ -46,17 +46,18 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 bolt:CallOnRemove( "lambdaplayer_crossbowbolt_"..bolt:EntIndex(), function()                    
                     if flySnd then flySnd:Stop() end
 
-                    local find = FindInSphereFilt(bolt:GetPos(), 2, function(ent)
+                    local find = FindInSphereFilt(bolt:GetPos(), 2, function( ent )
                         return (ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer())
                     end)
                     if !IsValid(find[1]) then return end
                     
                     local dmg = DamageInfo()
-                    dmg:SetDamage(100)
-                    dmg:SetDamageType(bit.bor(DMG_BULLET, DMG_NEVERGIB))
-                    dmg:SetAttacker(self or bolt)
-                    dmg:SetInflictor(bolt)
-                    find[1]:TakeDamageInfo(dmg)
+                    dmg:SetDamage( 100 )
+                    dmg:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * 100 )
+                    dmg:SetDamageType( bit.bor(DMG_BULLET, DMG_NEVERGIB) )
+                    dmg:SetAttacker( self or bolt )
+                    dmg:SetInflictor( bolt )
+                    find[1]:TakeDamageInfo( dmg )
                 end)
             end
 

@@ -1,5 +1,6 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 --Make random between burst or single shot on spawn
+--Random dmg / rof
 
     glock = {
         model = "models/weapons/w_pist_glock18.mdl",

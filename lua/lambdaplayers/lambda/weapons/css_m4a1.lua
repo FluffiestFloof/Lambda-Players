@@ -1,5 +1,6 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Do random on pew pew and silencer on spawn random
+--Random dmg
+--Allow Lambda to attach silencer on spawn randomly
 
     m4a1 = {
         model = "models/weapons/w_rif_m4a1.mdl",

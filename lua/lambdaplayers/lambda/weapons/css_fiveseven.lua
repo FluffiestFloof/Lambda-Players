@@ -1,4 +1,5 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
+--Random dmg / rof
 
     fiveseven = {
         model = "models/weapons/w_pist_fiveseven.mdl",
@@ -23,10 +24,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         reloadanimationspeed = 0.65,
         reloadsounds = { 
-            { 0, "Weapon_FiveSeven.Slideback"},
-            { 0.6, "Weapon_FiveSeven.Clipout"},
-            { 1.8, "Weapon_FiveSeven.Clipin"},
-            { 2.5, "Weapon_FiveSeven.Sliderelease"}
+            { 0, "Weapon_FiveSeven.Slideback" },
+            { 0.6, "Weapon_FiveSeven.Clipout" },
+            { 1.8, "Weapon_FiveSeven.Clipin" },
+            { 2.5, "Weapon_FiveSeven.Sliderelease" }
         },
 
         islethal = true,
