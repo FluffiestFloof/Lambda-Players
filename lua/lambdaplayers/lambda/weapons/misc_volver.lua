@@ -5,7 +5,7 @@ local bullettbl = {}
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     volver = {
-        model = "models/weapons/w_357.mdl",
+        model = "models/lambdaplayers/volver/w_volver.mdl",
         origin = "Misc",
         prettyname = "Volver",
         holdtype = "crossbow",
@@ -24,14 +24,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             { 1.5, "weapons/357/357_reload3.wav" }, 
             { 2.2, "weapons/357/357_spin1.wav" } 
         },
-
-        OnEquip = function( lambda, wepent )
-            wepent:SetModelScale(3, 0.00000001)
-        end,
-
-        OnUnequip = function( lambda, wepent )
-            wepent:SetModelScale(1, 0.00000001)
-        end,
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
