@@ -86,10 +86,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 muzzleFlash:SetAngles(muzzleAttach.Ang)
                 muzzleFlash:SetScale(0.5)
                 util.Effect("MuzzleEffect", muzzleFlash)
-            end]]--
+            end
 
             return blockData
-        end,
+        end,]]--
 
         islethal = true,
     }
