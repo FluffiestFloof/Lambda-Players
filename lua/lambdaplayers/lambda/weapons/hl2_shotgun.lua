@@ -27,7 +27,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
             -- Special double shot
             if math.random(6) == 1 and self.l_Clip >= 2 and self:GetRangeSquaredTo(target) <= (400 * 400) then
-                self.l_WeaponUseCooldown = CurTime() + random(1.25, 1.5)
+                self.l_WeaponUseCooldown = CurTime() + random(1.2, 1.5)
 
                 wepent:EmitSound( "Weapon_Shotgun.Double", 70, 100, 1, CHAN_WEAPON )
 
@@ -64,6 +64,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             -- To simulate pump action after the shot
             self:SimpleTimer(0.5, function()
                 wepent:EmitSound( "Weapon_Shotgun.Special1", 70, 100, 1, CHAN_WEAPON )
+                if bullettbl.Num == 12 then
+                    self:HandleShellEject( "ShotgunShellEject" )-- For the double shell secondary attack, not really important
+                end
                 self:HandleShellEject( "ShotgunShellEject" )
             end)
             

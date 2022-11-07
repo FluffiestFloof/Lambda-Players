@@ -6,7 +6,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "357. Revolver",
         holdtype = "revolver",
         bonemerge = true,
-        keepdistance = 500,
+        keepdistance = 550,
         attackrange = 3500,
 
         clip = 6,
