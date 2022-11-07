@@ -8,15 +8,15 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         model = "models/weapons/w_357.mdl",
         origin = "Misc",
         prettyname = "Volver",
-        holdtype = "revolver",
-        bonemerge = true,
+        holdtype = "crossbow",
+        bonemerge = false,
         keepdistance = 550,
         attackrange = 3500,
 
         clip = 1,
 
         reloadtime = 3,
-        reloadanim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
+        reloadanim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
         reloadanimationspeed = 1,
         reloadsounds = { 
             { 0, "weapons/357/357_reload1.wav" }, 
@@ -25,11 +25,19 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             { 2.2, "weapons/357/357_spin1.wav" } 
         },
 
+        OnEquip = function( lambda, wepent )
+            wepent:SetModelScale(3, 0.00000001)
+        end,
+
+        OnUnequip = function( lambda, wepent )
+            wepent:SetModelScale(1, 0.00000001)
+        end,
+
         --[[Draw = function( lambda, wepent )
             if IsValid( wepent ) then
-                wepent:SetModelScale(wepent:GetModelScale() * 5, 1)
+                wepent:SetModelScale(wepent:GetModelScale() * 5, 0.000001)
             end
-        end,]]--Really want to make a very big one tbh
+        end,]]
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
