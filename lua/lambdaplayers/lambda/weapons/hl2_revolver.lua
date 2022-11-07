@@ -1,3 +1,5 @@
+local random = math.random
+
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
     revolver = {
@@ -17,16 +19,16 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         muzzleflash = 1,
         shelleject = "none",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_REVOLVER,
-        attacksnd = "Weapon_357.Single",
+        attacksnd = "weapons/357/357_fire2.wav",
 
         reloadtime = 3,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
         reloadanimationspeed = 1,
         reloadsounds = { 
-            { 0, "Weapon_357.OpenLoader" }, 
-            { 0.4, "Weapon_357.RemoveLoader" }, 
-            { 1.5, "Weapon_357.ReplaceLoader" }, 
-            { 2.2, "Weapon_357.Spin" } 
+            { 0, "weapons/357/357_reload1.wav" }, 
+            { 0.4, "weapons/357/357_reload4.wav" }, 
+            { 1.5, "weapons/357/357_reload3.wav" }, 
+            { 2.2, "weapons/357/357_spin1.wav" } 
         },
 
         islethal = true,

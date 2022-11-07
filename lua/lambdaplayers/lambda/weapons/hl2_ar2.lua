@@ -18,12 +18,12 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         muzzleflash = 1,
         shelleject = "none",
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
-        attacksnd = "Weapon_AR2.Single",
+        attacksnd = "weapons/ar2/fire1.wav",
 
         reloadtime = 1.5,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 1,
-        reloadsounds = { { 0, "Weapon_AR2.Reload" } },
+        reloadsounds = { { 0, "weapons/ar2/ar2_reload.wav" } },
 
         islethal = true,
     }

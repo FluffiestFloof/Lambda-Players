@@ -18,7 +18,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadtime = 1.6,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_SMG1,
         reloadanimationspeed = 1,
-        reloadsounds = { { 0, "Weapon_SMG1.Reload" } },
+        reloadsounds = { { 0, "weapons/smg1/smg1_reload.wav" } },
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
@@ -27,7 +27,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             if math.random(75) == 1 and self:GetRangeSquaredTo(target) <= (1000 * 1000) then
                 self.l_WeaponUseCooldown = CurTime() + random(0.55, 0.75)
 
-                wepent:EmitSound( "Weapon_AR2.Double", 70, 100, 1, CHAN_WEAPON )
+                wepent:EmitSound( "weapons/ar2/ar2_altfire.wav", 70, 100, 1, CHAN_WEAPON )
 
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
                 self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_RPG )
@@ -46,7 +46,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             else
                 self.l_WeaponUseCooldown = CurTime() + 0.065
 
-                wepent:EmitSound( "Weapon_SMG1.Single", 70, 100, 1, CHAN_WEAPON )
+                wepent:EmitSound( "weapons/smg1/smg1_fire1.wav", 70, 100, 1, CHAN_WEAPON )
 
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1 )
                 self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_SMG1 )

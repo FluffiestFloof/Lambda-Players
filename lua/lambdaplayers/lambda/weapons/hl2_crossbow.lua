@@ -18,8 +18,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 1,
         reloadsounds = { 
-            { 0, "Weapon_Crossbow.Reload" }, 
-            { 1, "Weapon_Crossbow.BoltElectrify" } 
+            { 1, "weapons/crossbow/bolt_load"..random(2)..".wav" } 
         },
 
         callback = function( self, wepent, target )
@@ -27,7 +26,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             
             self.l_WeaponUseCooldown = CurTime() + 1.2
 
-            wepent:EmitSound( "Weapon_Crossbow.Single", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/crossbow/fire1.wav", 70, 100, 1, CHAN_WEAPON )
 
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
@@ -42,7 +41,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 bolt:Activate()
                 bolt:SetVelocity( dir:Forward() * (self:WaterLevel() == 3 and 1500 or 2500) )
 
-                local flySnd = CreateSound( bolt, "Weapon_Crossbow.BoltFly" )
+                local flySnd = CreateSound( bolt, "weapons/crossbow/bolt_fly4.wav" )
                 if flySnd then flySnd:Play() end
                 bolt:CallOnRemove( "lambdaplayer_crossbowbolt_"..bolt:EntIndex(), function()                    
                     if flySnd then flySnd:Stop() end
