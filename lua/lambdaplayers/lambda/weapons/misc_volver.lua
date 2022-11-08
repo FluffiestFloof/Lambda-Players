@@ -27,8 +27,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 self:HandleMuzzleFlash( 7 )
 
-                local pos = target:GetPos()+target:OBBCenter()
-
                 bullettbl.Attacker = self
                 bullettbl.Damage = 1000
                 bullettbl.Force = 1000
