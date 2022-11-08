@@ -41,10 +41,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 bolt:CallOnRemove( "lambdaplayer_crossbowbolt_"..bolt:EntIndex(), function()                    
 
-                    local find = self:FindInSphere(bolt:GetPos(), 5, function( ent )
-                        return (ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer())
+                    local find = self:FindInSphere( bolt:GetPos(), 5, function( ent )
+                        return ( ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer() )
                     end)
-                    if !IsValid(find[1]) then return end
+                    if !IsValid( find[1] ) then return end
                     
                     local dmg = DamageInfo()
                     dmg:SetDamage( 100 )
