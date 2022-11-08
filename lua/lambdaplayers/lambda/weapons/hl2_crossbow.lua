@@ -21,14 +21,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
-
-            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
-            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
             
             local bolt = ents.Create( "crossbow_bolt" )
             if IsValid( bolt ) then
                 self.l_Clip = self.l_Clip - 1
                 self.l_WeaponUseCooldown = CurTime() + 0.4
+
+                self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
+                self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
 
                 wepent:EmitSound( "Weapon_Crossbow.Single" )
 

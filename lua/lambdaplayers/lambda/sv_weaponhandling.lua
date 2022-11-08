@@ -157,7 +157,7 @@ function ENT:ReloadWeapon()
 
     local wep = self:GetWeaponENT()
     local time = weapondata.reloadtime or 1
-    local anim = weapondata.reloadanim or ACT_HL2MP_GESTURE_RELOAD_PISTOL
+    local anim = weapondata.reloadanim
     local animspeed = weapondata.reloadanimationspeed or 1
     local snds = weapondata.reloadsounds
 
@@ -169,8 +169,10 @@ function ENT:ReloadWeapon()
         end
     end
 
-    local id = self:AddGesture( anim )
-    self:SetLayerPlaybackRate( id, animspeed )
+    if anim then
+        local id = self:AddGesture( anim )
+        self:SetLayerPlaybackRate( id, animspeed )
+    end
 
     self:NamedTimer( "Reload", time, 1, function()
         if !self:GetIsReloading() then return end
