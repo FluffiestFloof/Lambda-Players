@@ -13,22 +13,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         keepdistance = 550,
         attackrange = 3500,
 
-        --[[clip = 1,
-
-        reloadtime = 3,
-        reloadanim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
-        reloadanimationspeed = 1,
-        reloadsounds = { 
-            { 0, "weapons/357/357_reload1.wav" }, 
-            { 0.4, "weapons/357/357_reload4.wav" }, 
-            { 1.5, "weapons/357/357_reload3.wav" }, 
-            { 2.2, "weapons/357/357_spin1.wav" } 
-        },]]--Good luck surviving 
-
         callback = function( self, wepent, target )
-            if self.l_Clip <= 0 then self:ReloadWeapon() return end
-
-            self.l_WeaponUseCooldown = CurTime() + 5
+            self.l_WeaponUseCooldown = CurTime() + 0.1
 
             wepent:EmitSound( "weapons/pistol/pistol_empty.wav", 70, 100, 1, CHAN_WEAPON )
 
