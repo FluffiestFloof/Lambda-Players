@@ -18,7 +18,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 0.5
 
-            wepent:EmitSound( "lambdaplayers/pan/pan_miss.wav", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "", 70, 100, 1, CHAN_WEAPON )
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE )
             
@@ -26,17 +26,16 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self:SimpleTimer(0.25, function()
                 if self:GetRangeSquaredTo(target) > (70 * 70) then return end
                 
-                local dmg = 15
-                local dmginfo = DamageInfo()
-                dmginfo:SetDamage(dmg)
-                dmginfo:SetAttacker(self)
-                dmginfo:SetInflictor(wepent)
-                dmginfo:SetDamageType(DMG_CLUB)
-                dmginfo:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * dmg )
+                local dmg = DamageInfo()
+                dmg:SetDamage( 5 )
+                dmg:SetAttacker( self )
+                dmg:SetInflictor( wepent )
+                dmg:SetDamageType( DMG_CLUB )
+                dmg:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * 5 )
                 
-                target:EmitSound("lambdaplayers/pan/melee_frying_pan_0"..random(4)..".wav", 70)
+                target:EmitSound( "", 70)
                 
-                target:TakeDamageInfo( dmginfo )
+                target:TakeDamageInfo( dmg )
             end)
             
             return true
