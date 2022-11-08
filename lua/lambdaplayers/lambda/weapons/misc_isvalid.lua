@@ -16,7 +16,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         
         callback = function( self, wepent, target )
             
-            if random(1) == 1 then
+            if random(10) == 1 then
                 self.l_WeaponUseCooldown = CurTime() + 1.5
 
                 wepent:EmitSound( "Weapon_Crowbar.Single", 70, 100, 1, CHAN_WEAPON )
@@ -28,17 +28,20 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     if self:GetRangeSquaredTo(target) > (70 * 70) then return end
                     
                     local dmg = DamageInfo()
-                    --dmg:SetDamage( target:GetMaxHealth()*2 )
+                    dmg:SetDamage( target:GetMaxHealth()*5 )
                     dmg:SetAttacker( self )
                     dmg:SetInflictor( wepent )
                     dmg:SetDamageType( DMG_DISSOLVE )
                     dmg:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * 5 )
                     
                     target:EmitSound( "buttons/button15.wav", 90 )
-                    
+
                     local effect = EffectData()
-                    effect:SetOrigin( target:GetPos() )
-                    Effect( "TeslaZap", effect )
+                        effect:SetOrigin( target:WorldSpaceCenter() )
+                        effect:SetMagnitude(1)
+                        effect:SetScale(2)
+                        effect:SetRadius(4)
+                    Effect( "cball_explode", effect, true, true)
                     
                     target:TakeDamageInfo( dmg )
                 end)
