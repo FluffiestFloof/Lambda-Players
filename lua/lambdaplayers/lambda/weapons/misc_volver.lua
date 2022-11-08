@@ -11,8 +11,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Volver",
         holdtype = "crossbow",
         bonemerge = false,
-        keepdistance = 550,
-        attackrange = 3500,
+        keepdistance = 600,
+        attackrange = 4000,
 
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 5
