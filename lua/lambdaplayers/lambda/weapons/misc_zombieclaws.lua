@@ -39,7 +39,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         OnUnequip = function( lambda, wepent )
             lambda:RemoveHook( "EntityTakeDamage", "ZombieClawsScaleDamage" )
             lambda:RemoveHook( "Think", "ZombieClawsThink" )
-            if lambda:Health() > lambda:GetMaxHealth() then lambda:SetHealth( lambda:GetMaxHealth() ) end
         end,
         
         callback = function( self, wepent, target )
