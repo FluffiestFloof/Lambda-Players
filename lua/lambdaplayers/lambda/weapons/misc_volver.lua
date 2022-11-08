@@ -1,5 +1,6 @@
 local random = math.random
 local CurTime = CurTime
+local Effect = util.Effect
 local bullettbl = {}
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
@@ -14,17 +15,17 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 3500,
 
         callback = function( self, wepent, target )
-            self.l_WeaponUseCooldown = CurTime() + 0.1
+            self.l_WeaponUseCooldown = CurTime() + 5
 
             wepent:EmitSound( "weapons/pistol/pistol_empty.wav", 70, 100, 1, CHAN_WEAPON )
 
             self:SimpleTimer( 1, function()
                 if !IsValid( self ) or !IsValid( target ) or !IsValid( wepent ) then return end
-                wepent:EmitSound( "weapons/357/357_fire2.wav", 70, random(98,102), 1, CHAN_WEAPON )
+                wepent:EmitSound( "weapons/357/357_fire2.wav", 70, random(70,75), 1, CHAN_WEAPON )
                 self:EmitSound( "ambient/explosions/explode_4.wav", 70, 100, 1, CHAN_WEAPON )
-                self:EmitSound ("physics/body/body_medium_break"..math.random(2,4)..".wav", 90)
+                self:EmitSound( "physics/body/body_medium_break"..math.random(2,4)..".wav", 90)
 
-                self:HandleMuzzleFlash( 7, Vector(0,100,0) )--Not doing much?
+                self:HandleMuzzleFlash( 7 )
 
                 local pos = target:GetPos()+target:OBBCenter()
 
@@ -33,7 +34,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 bullettbl.Force = 1000
                 bullettbl.HullSize = 5
                 bullettbl.Num = 1
-                bullettbl.TracerName = "AR2Tracer"
+                bullettbl.TracerName = "GunshipTracer"
                 bullettbl.Dir = ( target:WorldSpaceCenter() - wepent:GetPos() ):GetNormalized()
                 bullettbl.Src = wepent:GetPos()
                 bullettbl.Spread = Vector( 0.05, 0.05, 0 )
