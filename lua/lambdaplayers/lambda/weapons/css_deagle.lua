@@ -16,20 +16,21 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         rateoffire = 0.3,
         muzzleflash = 1,
         shelleject = "ShellEject",
+        shelloffpos = Vector(0,-3,0),
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_REVOLVER,
-        attacksnd = "Weapon_DEagle.Single",
+        attacksnd = "weapons/deagle/deagle-1.wav",
 
         reloadtime = 2.2,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_PISTOL,
         reloadanimationspeed = 1,
         reloadsounds = { 
-            { 0, "Weapon_DEagle.Slideback" },
-            { 0.3, "Weapon_DEagle.Clipout" }, 
-            { 1.4, "Weapon_DEagle.Clipin" }
+            { 0, "weapons/deagle/de_slideback.wav" },
+            { 0.3, "weapons/deagle/de_clipout.wav" }, 
+            { 1.2, "weapons/deagle/de_clipin.wav" }
         },
 
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "Weapon_DEagle.Deploy", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/deagle/de_deploy.wav", 75, 100, 1, CHAN_WEAPON )
         end,
 
         islethal = true,

@@ -1,6 +1,4 @@
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
---Redo reload
---Random dmg
 
     ak47 = {
         model = "models/weapons/w_rif_ak47.mdl",
@@ -13,25 +11,26 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         clip = 30,
         tracername = "Tracer",
-        damage = 9, -- 8 to 13 (zeta)
+        damage = 11,
         spread = 0.13,
         rateoffire = 0.13,
         muzzleflash = 1,
         shelleject = "RifleShellEject",
+        shelloffpos = Vector(-1,-5,-5),
         attackanim = ACT_HL2MP_GESTURE_RANGE_ATTACK_AR2,
         attacksnd = "Weapon_AK47.Single",
 
-        reloadtime = 2,
+        reloadtime = 2.4,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
         reloadanimationspeed = 0.9,
         reloadsounds = { 
-            { 0, "Weapon_AK47.Clipout" },
-            { 0.8, "Weapon_AK47.Clipin" },
-            { 1.5, "Weapon_AK47.BoltPull" }
+            { 0.1, "weapons/ak47/ak47_clipout.wav" },
+            { 1.4, "weapons/ak47/ak47_clipin.wav" },
+            { 1.9, "weapons/ak47/ak47_boltpull.wav" }
         },
 
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "Weapon_AK47.BoltPull", 70, 100, 1, CHAN_WEAPON )
+            wepent:EmitSound( "weapons/ak47/ak47_boltpull.wav", 70, 100, 1, CHAN_WEAPON )
         end,
 
         islethal = true,
