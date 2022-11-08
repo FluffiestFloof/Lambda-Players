@@ -1,5 +1,4 @@
 local CurTime = CurTime
-local random = math.random
 local boltDmg = GetConVar("sk_plr_dmg_crossbow")
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
@@ -16,26 +15,26 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         clip = 1,
 
         reloadtime = 1.83,
-        reloadanimationspeed = 1,
         reloadsounds = { 
             { 0.93, "Weapon_Crossbow.BoltElectrify" }
         },
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
+
+            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
+            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
             
             local bolt = ents.Create( "crossbow_bolt" )
             if IsValid( bolt ) then
                 self.l_Clip = self.l_Clip - 1
                 self.l_WeaponUseCooldown = CurTime() + 0.4
-                self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
-                self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_CROSSBOW )
 
                 wepent:EmitSound( "Weapon_Crossbow.Single" )
 
                 local fireDir = ( target:WorldSpaceCenter() - self:EyePos() ):Angle()
 
-                bolt:SetPos( self:EyePos() + fireDir:Forward() * 32 ) 
+                bolt:SetPos( self:EyePos() + fireDir:Forward() * 32 + fireDir:Up() * 32 ) 
                 bolt:SetAngles( fireDir )
                 bolt:Spawn()
                 bolt:SetOwner( self )
