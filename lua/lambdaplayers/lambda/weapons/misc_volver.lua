@@ -13,7 +13,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         keepdistance = 550,
         attackrange = 3500,
 
-        clip = 1,
+        --[[clip = 1,
 
         reloadtime = 3,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_SHOTGUN,
@@ -23,7 +23,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             { 0.4, "weapons/357/357_reload4.wav" }, 
             { 1.5, "weapons/357/357_reload3.wav" }, 
             { 2.2, "weapons/357/357_spin1.wav" } 
-        },
+        },]]--Good luck surviving 
 
         callback = function( self, wepent, target )
             if self.l_Clip <= 0 then self:ReloadWeapon() return end
@@ -38,7 +38,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 self:EmitSound( "ambient/explosions/explode_4.wav", 70, 100, 1, CHAN_WEAPON )
                 self:EmitSound("physics/body/body_medium_break"..math.random(2,4)..".wav",90)
 
-                self:HandleMuzzleFlash( 7 )
+                self:HandleMuzzleFlash( 7, Vector(0,100,0) )--Not doing much?
 
                 local pos = target:GetPos()+target:OBBCenter()
 
@@ -55,14 +55,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 
                 wepent:FireBullets( bullettbl )
 
-                util.ScreenShake(self:GetPos(), 10, 170, 3, 1500)
+                util.ScreenShake( self:GetPos(), 10, 170, 3, 1500 )
                 
                 local dmg = DamageInfo()
                 dmg:SetDamage( self:Health() * 100000 )
                 dmg:SetDamageType( DMG_BLAST) 
                 dmg:SetAttacker( self )
                 dmg:SetInflictor( self )
-                dmg:SetDamageForce( self:GetForward()*-80000000 )
+                dmg:SetDamageForce( self:GetForward() * -80000000 )
                 self:TakeDamageInfo( dmg )
             end)
             
