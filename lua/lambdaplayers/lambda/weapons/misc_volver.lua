@@ -22,7 +22,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 if !IsValid( self ) or !IsValid( target ) or !IsValid( wepent ) then return end
                 wepent:EmitSound( "weapons/357/357_fire2.wav", 70, random(98,102), 1, CHAN_WEAPON )
                 self:EmitSound( "ambient/explosions/explode_4.wav", 70, 100, 1, CHAN_WEAPON )
-                self:EmitSound("physics/body/body_medium_break"..math.random(2,4)..".wav",90)
+                self:EmitSound ("physics/body/body_medium_break"..math.random(2,4)..".wav", 90)
 
                 self:HandleMuzzleFlash( 7, Vector(0,100,0) )--Not doing much?
 
