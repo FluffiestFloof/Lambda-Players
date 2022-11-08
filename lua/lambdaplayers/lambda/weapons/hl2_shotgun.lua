@@ -30,7 +30,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 bullettbl.Num = 12
 
-                self.l_Clip = self.l_Clip - 0
+                self.l_Clip = self.l_Clip - 2
             else
                 self.l_WeaponUseCooldown = CurTime() + random(1, 1.25)
 
@@ -38,7 +38,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 bullettbl.Num = 7
 
-                self.l_Clip = self.l_Clip - 0
+                self.l_Clip = self.l_Clip - 1
             end
             
             bullettbl.Attacker = self
