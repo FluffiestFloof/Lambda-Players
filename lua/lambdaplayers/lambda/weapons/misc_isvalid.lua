@@ -7,7 +7,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
     isvalid = {
         model = "models/lambdaplayers/validbar/w_validbar.mdl",
         origin = "Misc",
-        prettyname = "IsValid()",
+        prettyname = "IsValidBar",
         holdtype = "melee2",
         ismelee = true,
         bonemerge = true,
