@@ -49,6 +49,15 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 dmg:SetInflictor( self )
                 dmg:SetDamageForce( self:GetForward() * -80000000 )
                 self:TakeDamageInfo( dmg )
+
+                local effect = EffectData()
+                    effect:SetOrigin( wepent:GetAttachment( 1 ).Pos )
+                    effect:SetStart( wepent:GetAttachment( 1 ).Pos )
+                    effect:SetAngles( wepent:GetAttachment( 1 ).Ang )
+                    effect:SetMagnitude(5)
+                    effect:SetScale(10)
+                    effect:SetRadius(10)
+                Effect( "cball_bounce", effect, true, true)
             end)
             
             return true

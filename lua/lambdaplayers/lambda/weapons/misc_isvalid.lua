@@ -21,10 +21,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 wepent:EmitSound( "Weapon_Crowbar.Single", 70, 100, 1, CHAN_WEAPON )
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2 )
-                self:SetLayerPlaybackRate( self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2 ), 0.75 )
+                self:SetLayerPlaybackRate( self:AddGesture( ACT_GMOD_GESTURE_MELEE_SHOVE_2HAND ), 0.6 )
                 
                 -- To make sure damage syncs with the animation
-                self:SimpleTimer(0.5, function()
+                self:SimpleTimer(0.8, function()
                     if self:GetRangeSquaredTo(target) > (70 * 70) then return end
                     
                     local dmg = DamageInfo()
@@ -41,7 +41,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                         effect:SetMagnitude(1)
                         effect:SetScale(2)
                         effect:SetRadius(4)
-                    Effect( "cball_explode", effect, true, true)
+                        effect:SetEntity(target)
+                    Effect( "entity_remove", effect, true, true)
                     
                     target:TakeDamageInfo( dmg )
                 end)
