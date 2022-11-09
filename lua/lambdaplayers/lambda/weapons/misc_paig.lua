@@ -19,7 +19,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
         
         OnEquip = function( lambda, wepent )
-            lambda:FindTarget()
+            --lambda:FindTarget()
         end,
 
         callback = function( self, wepent, target )
@@ -28,7 +28,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
             self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
 
-            for _, v in ipairs( ents.FindByClass( "npc_lambdaplayer" ) ) do
+            --[[for _, v in ipairs( ents.FindByClass( "npc_lambdaplayer" ) ) do
                 if v != self and v:GetRangeSquaredTo ( self ) <= ( 400*400 ) and v:Visible( self ) and LambdaIsValid( v ) then
                     v:SimpleTimer( Rand( 0.1, 0.5 ), function()
                         if LambdaIsValid( v ) then return end
@@ -37,7 +37,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                         --Play random scream
                     end)
                 end
-            end
+            end]]
             
             self:SimpleTimer( 0.3, function()
                 if !IsValid( self ) or !IsValid( wepent ) then return end
@@ -48,7 +48,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 
                 BlastDamage( self, self, wepent:GetPos(), 400, 1000 )
 
-                wep:EmitSound( "BaseExplosionEffect.Sound" , 90 )
+                wepent:EmitSound( "BaseExplosionEffect.Sound" , 90 )
 
             end)
             

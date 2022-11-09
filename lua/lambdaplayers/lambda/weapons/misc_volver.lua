@@ -1,6 +1,6 @@
 local random = math.random
 local CurTime = CurTime
-local Effect = util.Effect
+local util_Effect = util.Effect
 local bullettbl = {}
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
@@ -57,7 +57,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     effect:SetMagnitude(5)
                     effect:SetScale(10)
                     effect:SetRadius(10)
-                Effect( "cball_bounce", effect, true, true)
+                util_Effect( "cball_bounce", effect, true, true)
             end)
             
             return true
