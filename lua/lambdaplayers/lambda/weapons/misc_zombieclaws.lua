@@ -45,6 +45,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self.l_WeaponUseCooldown = CurTime() + 1.25
 
             wepent:EmitSound( "npc/zombie/zo_attack"..random(2)..".wav", 70, 100, 1, CHAN_WEAPON )
+            
             self:RemoveGesture( ACT_GMOD_GESTURE_RANGE_ZOMBIE )
             self:AddGesture( ACT_GMOD_GESTURE_RANGE_ZOMBIE )
             
