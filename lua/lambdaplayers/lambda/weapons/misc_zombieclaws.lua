@@ -33,7 +33,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     lambda:SetHealth(math_min(lambda:Health() + 1, lambda:GetMaxHealth()))
                     NextHPRegenTime = CurTime() + 0.5
                 end
-            end)
+            end, nil, 0.5)
         end,
         
         OnUnequip = function( lambda, wepent )

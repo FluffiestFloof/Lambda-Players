@@ -15,7 +15,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 70,
         
         callback = function( self, wepent, target )
-            
             if random(10) == 1 then
                 self.l_WeaponUseCooldown = CurTime() + 1.5
 
@@ -23,9 +22,17 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2 )
                 self:SetLayerPlaybackRate( self:AddGesture( ACT_GMOD_GESTURE_MELEE_SHOVE_2HAND ), 0.6 )
                 
-                -- To make sure damage syncs with the animation
-                self:SimpleTimer(0.8, function()
-                    if self:GetRangeSquaredTo(target) > (70 * 70) then return end
+                self:SimpleTimer( 0.8, function()
+                    if self:GetRangeSquaredTo(target) > ( 70 * 70 ) then return end
+
+                    if target:IsPlayer() then
+                        self:Hook( "PlayerDeath", function(victim, inflictor, attacker)
+                            if target == victim and wepent == inflictor and self == attacker then
+                                print("blip")
+                                target:GetRagdollEntity():Remove()
+                            end
+                            return false
+                        end)-- Really didn't find a better way yet
                     
                     local dmg = DamageInfo()
                     dmg:SetDamage( target:GetMaxHealth()*5 )
@@ -38,13 +45,15 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                     local effect = EffectData()
                         effect:SetOrigin( target:WorldSpaceCenter() )
-                        effect:SetMagnitude(1)
-                        effect:SetScale(2)
-                        effect:SetRadius(4)
-                        effect:SetEntity(target)
-                    Effect( "entity_remove", effect, true, true)
+                        effect:SetMagnitude( 1 )
+                        effect:SetScale( 2 )
+                        effect:SetRadius( 4 )
+                        effect:SetEntity( target )
+                    Effect( "entity_remove", effect, true, true )
                     
                     target:TakeDamageInfo( dmg )
+
+
                 end)
             else
                 self.l_WeaponUseCooldown = CurTime() + 0.5
@@ -54,14 +63,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_MELEE2 )
                 
                 -- To make sure damage syncs with the animation
-                self:SimpleTimer(0.25, function()
-                    if self:GetRangeSquaredTo(target) > (70 * 70) then return end
+                self:SimpleTimer( 0.25, function()
+                    if self:GetRangeSquaredTo(target) > ( 70 * 70 ) then return end
                     
                     local dmg = DamageInfo()
-                    dmg:SetDamage( 5 )
+                    dmg:SetDamage( dmg:GetDamage()+3 )--thonk
                     dmg:SetAttacker( self )
                     dmg:SetInflictor( wepent )
-                    dmg:SetDamageType( DMG_CLUB, DMG_DISSOLVE )
+                    dmg:SetDamageType( DMG_CLUB )
                     dmg:SetDamageForce( ( target:WorldSpaceCenter() - self:WorldSpaceCenter() ):GetNormalized() * 5 )
                     
                     wepent:EmitSound( "EpicMetal.ImpactHard" )
