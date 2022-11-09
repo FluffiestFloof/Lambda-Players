@@ -18,7 +18,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 100,
         
         OnEquip = function( lambda, wepent )
-            local NextHPRegenTime = CurTime() + 0.5
             
             -- Damage reduction
             lambda:Hook( "EntityTakeDamage", "ZombieClawsScaleDamage", function( target, dmginfo )
@@ -29,11 +28,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             
             -- HP Auto Regen
             lambda:Hook( "Think", "ZombieClawsThink", function( )
-                if NextHPRegenTime and CurTime() > NextHPRegenTime and lambda:Health() < lambda:GetMaxHealth() then
                     lambda:SetHealth(math_min(lambda:Health() + 1, lambda:GetMaxHealth()))
-                    NextHPRegenTime = CurTime() + 0.5
-                end
             end, nil, 0.5)
+            
         end,
         
         OnUnequip = function( lambda, wepent )
