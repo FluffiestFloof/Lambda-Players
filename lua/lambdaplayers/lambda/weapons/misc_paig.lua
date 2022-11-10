@@ -18,6 +18,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         attackrange = 50,
         addspeed = 50,
 
+        OnEquip = function( lambda, wepent )
+            wepent:EmitSound( "weapons/pinpull.wav", 70 )
+        end,
+
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 4
 
