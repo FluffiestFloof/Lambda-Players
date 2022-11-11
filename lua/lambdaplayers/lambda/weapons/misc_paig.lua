@@ -1,13 +1,12 @@
 local CurTime = CurTime
+local random = math.random
 local Rand = math.Rand
 local Effect = util.Effect
+local ScreenShake = util.ScreenShake
 local BlastDamage = util.BlastDamage
 
-if IsMounted('tf') then
-    local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG have the ability to act like the Sentry Buster from TF2.", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
-    local sentrybusterConVar = GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool()
-    local tf2 = true
-end
+local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG should act like the Sentry Buster. TF2 REQUIRED!", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
+local tf2 = false
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
@@ -23,16 +22,44 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
 
         OnEquip = function( lambda, wepent )
-            wepent:EmitSound( "weapons/pinpull.wav", 70 )
+            if IsMounted('tf') and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then tf2=true end
+
+            if tf2 then
+                lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
+                lambda:SimpleTimer( 0.3, function()
+                    lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                end)
+            else
+                wepent:EmitSound( "weapons/pinpull.wav", 70 )
+            end
+        end,
+
+        OnUnequip = function( lambda, wepent )
+            lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
         end,
 
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 4
 
-            wepent:EmitSound( "WeaponFrag.Throw", 70 )
+            if tf2 then
+                local dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
+                wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
+                self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
 
-            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
-            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
+                --[[self:Hook( "Think", "PAIGSpin", function( )
+                    self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, RealTime() * 460 ) )
+                    print(self:Health())
+                    if self:Health() < 1 then -- very hacky fix
+                        self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, RealTime()*0 ) )
+                        self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                        self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
+                    end
+                end, nil, 0.001)]]
+            else
+                wepent:EmitSound( "WeaponFrag.Throw", 70 )
+                self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
+                self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
+            end
 
             --[[for _, v in ipairs( ents.FindByClass( "npc_lambdaplayer" ) ) do
                 if v != self and v:GetRangeSquaredTo ( self ) <= ( 400*400 ) and v:Visible( self ) and LambdaIsValid( v ) then
@@ -45,8 +72,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 end
             end]]
             
-            self:SimpleTimer( 0.3, function()
-                if !IsValid( self ) or !IsValid( wepent ) then return end
+            --ValveBiped.Bip01_Spine
+            
+            self:SimpleTimer( dur, function()
+                if !IsValid( self ) or !IsValid( wepent ) then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) return end
                 
                 local effect = EffectData()
                 effect:SetOrigin( wepent:GetPos() )
@@ -54,7 +83,31 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 
                 BlastDamage( self, self, wepent:GetPos(), 400, 1000 )
 
-                wepent:EmitSound( "BaseExplosionEffect.Sound" , 90 )
+                if tf2 then
+                    ScreenShake( wepent:GetPos(), 25, 5, 3, 1000 )
+                        
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( 50, 50, 25 ), wepent:GetAngles() )
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( -50, -50, 25 ), wepent:GetAngles() )
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( -50, 50, 25 ), wepent:GetAngles() )
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( 50, -50, 25 ), wepent:GetAngles() )
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( -50, -50, 25 ), wepent:GetAngles() )
+                    ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( 50, -50, 25 ), wepent:GetAngles() )
+    
+                    for _, v in ipairs( ents.FindInSphere( wepent:GetPos(), 1000 ) ) do
+                        if IsValid( v ) and v:IsPlayer() then
+                            local screenfade_rand = random( 1, 2 )
+                            if screenfade_rand == 1 then
+                                v:ScreenFade(SCREENFADE.IN, Color(255, 255, 255, 255), 1.0, 0.1)
+                            elseif screenfade_rand == 2 then
+                                v:ScreenFade(SCREENFADE.IN, Color(255, 255, 255, 120), 1.0, 0.1)
+                            end
+                        end
+                    end
+                    self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
+                    self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) )
+                else
+                    wepent:EmitSound( "BaseExplosionEffect.Sound" , 90 )
+                end
 
             end)
             
