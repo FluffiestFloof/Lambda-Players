@@ -38,6 +38,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
         end,
 
+        -- Stop sound on death
+        OnDamage = function( lambda, wepent, dmginfo )
+            print(lambda:Health())
+            if IsValid( lambda ) and lambda:GetIsDead() then
+                lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+            end
+        end,
+
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 4
             local dur = 0.3
@@ -115,5 +123,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         islethal = true,
     }
+    
 
 })
