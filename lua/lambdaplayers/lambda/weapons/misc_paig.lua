@@ -22,13 +22,13 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
 
         OnEquip = function( lambda, wepent )
-            if IsMounted('tf') and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then tf2=true end
+            if IsMounted('tf') then tf2=true end
 
-            if tf2 then
+            if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
-                lambda:SimpleTimer( 0.3, function()
+                --[[lambda:SimpleTimer( 0.3, function()
                     lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
-                end)
+                end)]] -- I hate loops.
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
             end
@@ -41,7 +41,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 4
 
-            if tf2 then
+            if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 local dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
                 wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
                 self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
@@ -83,7 +83,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 
                 BlastDamage( self, self, wepent:GetPos(), 400, 1000 )
 
-                if tf2 then
+                if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                     ScreenShake( wepent:GetPos(), 25, 5, 3, 1000 )
                         
                     ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( 50, 50, 25 ), wepent:GetAngles() )
