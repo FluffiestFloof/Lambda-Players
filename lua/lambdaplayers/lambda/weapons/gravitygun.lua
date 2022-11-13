@@ -97,6 +97,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             else
                 wepent:EmitSound( "weapons/physcannon/physcannon_dryfire.wav", 70 )
             end
+
+            self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PHYSGUN )
+            self:AddGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_PHYSGUN )
             
             return true
         end,
