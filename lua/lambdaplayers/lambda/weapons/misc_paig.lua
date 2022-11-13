@@ -7,6 +7,7 @@ local BlastDamage = util.BlastDamage
 
 local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG should act like the Sentry Buster. TF2 REQUIRED!", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
 local tf2 = false
+local loopSound
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
@@ -25,26 +26,30 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             if IsMounted('tf') then tf2=true end -- If user doesn't have TF2, the convar is pretty much useless
 
             if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+                loopSound = CreateSound( lambda, "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
-                --[[lambda:SimpleTimer( 0.3, function()
-                    lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
-                end)]] -- I hate loops. Can't get it to properly go away...
+                lambda:SimpleTimer( 0.3, function()
+                    --lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                    if IsValid ( loopSound ) then loopSound:SetSoundLevel( 70 ) loopSound:Play() end
+                end)
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
             end
         end,
 
         OnUnequip = function( lambda, wepent )
-            lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+            if IsValid ( loopSound ) then loopSound:Stop() loopSound = nil end
         end,
 
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 4
 
             if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+                if lIsValid ( loopSound )oopSound then loopSound:Stop() end
                 local dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
                 wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
-                self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                --wepent:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                --self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
 
                 --[[self:Hook( "Think", "PAIGSpin", function( )
                     self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, RealTime() * 460 ) )
@@ -101,7 +106,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                             end
                         end
                     end
-                    self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
+                    if loopSound then loopSound:Stop() end -- Just in case
                     self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) )
                 else
                     wepent:EmitSound( "BaseExplosionEffect.Sound" , 90 )
