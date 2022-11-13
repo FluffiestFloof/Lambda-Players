@@ -29,7 +29,7 @@ net.Receive( "lambdaplayers_becomeragdoll", function()
 
     local ragdoll = ent:BecomeRagdollOnClient()
     ragdoll:DrawShadow( true )
-    ragdoll.GetPlayerColor = function() return col end
+    ragdoll.GetPlayerColor = function() return colvec end
 
     ent.ragdoll = ragdoll
 
@@ -101,7 +101,17 @@ end )
 local voiceicon = Material( "voice/icntlk_pl" )
 
 
+local function CreateProfilePictureMat( ent )
+    local pfp = ent:GetProfilePicture()
 
+    local profilepicturematerial = Material( pfp )
+
+    if profilepicturematerial:IsError() then
+        local model = ent:GetModel()
+        profilepicturematerial = Material( "spawnicons/" .. sub( model, 1, #model - 4 ) .. ".png" )
+    end
+    return profilepicturematerial
+end
 
 -- Voice icons, voice positioning, all that stuff will be handled in here.
 local function PlaySoundFile( ent, soundname, index, shouldstoponremove, is3d )
@@ -109,7 +119,7 @@ local function PlaySoundFile( ent, soundname, index, shouldstoponremove, is3d )
 
     if IsValid( ent.l_VoiceSnd ) then ent.l_VoiceSnd:Stop() end
 
-    local flag = ( globalvoice:GetBool() and "" or is3d and "3d mono noplay" or "mono noplay" )
+    local flag = ( is3d and "3d mono noplay" or "mono noplay" )
 
     sound.PlayFile( "sound/" .. soundname, flag, function( snd, ID, errorname )
         if ID == 21 then
@@ -166,14 +176,14 @@ local function PlaySoundFile( ent, soundname, index, shouldstoponremove, is3d )
 
             ent.l_VoiceSnd = snd
 
+            snd:SetPlaybackRate( pitch / 100 )
+
             -- Tell the server the duration of this sound file
             -- See server/netmessages.lua
             net.Start( "lambdaplayers_server_sendsoundduration" )
             net.WriteEntity( ent )
-            net.WriteFloat( length )
+            net.WriteFloat( ( length / ( pitch / 100 ) ) )
             net.SendToServer()
-
-            snd:SetPlaybackRate( pitch / 100 )
 
             if !globalvoice:GetBool() and is3d then
                 snd:Set3DFadeDistance( 300, 0 )
@@ -185,12 +195,12 @@ local function PlaySoundFile( ent, soundname, index, shouldstoponremove, is3d )
 
             for k, v in ipairs( _LAMBDAPLAYERS_Voicechannels ) do
                 if IsValid( ent ) and v[ 5 ] == ent:EntIndex() then
-                    _LAMBDAPLAYERS_Voicechannels[ k ] = { snd, ent:GetLambdaName(), Material( ent:GetProfilePicture() ), length, ent:EntIndex() }
+                    _LAMBDAPLAYERS_Voicechannels[ k ] = { snd, ent:GetLambdaName(), CreateProfilePictureMat( ent ), length, ent:EntIndex() }
                     replaced = true
                     break
                 end
             end
-            if !replaced and IsValid( ent ) then table_insert( _LAMBDAPLAYERS_Voicechannels, { snd, ent:GetLambdaName(), Material( ent:GetProfilePicture() ), length, ent:EntIndex() } ) end
+            if !replaced and IsValid( ent ) then table_insert( _LAMBDAPLAYERS_Voicechannels, { snd, ent:GetLambdaName(), CreateProfilePictureMat( ent ), length, ent:EntIndex() } ) end
 
             local num
             local realtime
@@ -296,5 +306,14 @@ net.Receive( "lambdaplayers_notification", function()
     notification.AddLegacy( text, notify, 3 )
 
     if snd then surface.PlaySound( snd ) end
-    
+end )
+
+local unpack = unpack
+local JSONToTable = util.JSONToTable
+local chat_AddText = chat.AddText
+net.Receive( "lambdaplayers_chatadd", function()
+    local args = net.ReadString()
+    args = JSONToTable( args )
+
+    chat_AddText( unpack( args ) )
 end )

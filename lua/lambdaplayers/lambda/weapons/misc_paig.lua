@@ -1,6 +1,7 @@
 local CurTime = CurTime
 local random = math.random
 local Rand = math.Rand
+local IsValid = IsValid
 local Effect = util.Effect
 local ScreenShake = util.ScreenShake
 local BlastDamage = util.BlastDamage

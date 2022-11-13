@@ -5,6 +5,10 @@ ENT.PrintName = "Lambda Player"
 ENT.Author = "StarFrost"
 ENT.IsLambdaPlayer = true
 
+local include = include
+local print = print
+local AddCSLuaFile = AddCSLuaFile
+
 --- Include files based on sv_ sh_ or cl_
 local ENTFiles = file.Find( "lambdaplayers/lambda/*", "LUA", "nameasc" )
 
@@ -40,17 +44,26 @@ end
     local isfunction = isfunction
     local Lerp = Lerp
     local isentity = isentity
+    local VectorRand = VectorRand
     local Vector = Vector
     local coroutine = coroutine
     local debugoverlay = debugoverlay
+    local table_Random = table.Random
+    local table_GetKeys = table.GetKeys
     local voicepitchmin = GetConVar( "lambdaplayers_voice_voicepitchmin" )
     local voicepitchmax = GetConVar( "lambdaplayers_voice_voicepitchmax" )
     local idledir = GetConVar( "lambdaplayers_voice_idledir" )
     local drawflashlight = GetConVar( "lambdaplayers_drawflashlights" )
     local allowaddonmodels = GetConVar( "lambdaplayers_lambda_allowrandomaddonsmodels" ) 
+    local voiceprofilechance = GetConVar( "lambdaplayers_lambda_voiceprofileusechance" )
+    local _LAMBDAPLAYERSFootstepMaterials = _LAMBDAPLAYERSFootstepMaterials
     local CurTime = CurTime
+    local min = math.min
     local color_white = color_white
+    local TraceHull = util.TraceHull
+    local QuickTrace = util.QuickTrace
     local FrameTime = FrameTime
+    local unstucktable = {}
     local sub = string.sub
     local RealTime = RealTime
     
@@ -62,25 +75,21 @@ if CLIENT then
 
 end
 
-
 function ENT:Initialize()
 
     self.l_SpawnPos = self:GetPos() -- Used for Respawning
     self.l_SpawnAngles = self:GetAngles()
 
     if SERVER then
-
-        LambdaPlayerNames = LambdaPlayerNames or LAMBDAFS:GetNameTable()
-        LambdaPlayerProps = LambdaPlayerProps or LAMBDAFS:GetPropTable()
-        LambdaPlayerMaterials = LambdaPlayerMaterials or LAMBDAFS:GetMaterialTable()
-        Lambdaprofilepictures = Lambdaprofilepictures or LAMBDAFS:GetProfilePictures()
-
+        
         self:SetSolid( SOLID_BBOX )
         self:SetCollisionBounds( Vector( -17, -17, 0 ), Vector( 17, 17, 72 ) )
 
         self:SetModel( allowaddonmodels:GetBool() and _LAMBDAPLAYERS_Allplayermodels[ random( #_LAMBDAPLAYERS_Allplayermodels ) ] or _LAMBDAPLAYERSDEFAULTMDLS[ random( #_LAMBDAPLAYERSDEFAULTMDLS ) ] )
 
         self.IsMoving = false
+        self.l_unstuck = false
+        self.l_UnstuckBounds = 50
         self.l_State = "Idle" -- See sv_states.lua
         self.l_Weapon = ""
         self.debuginitstart = SysTime()
@@ -89,6 +98,9 @@ function ENT:Initialize()
         self.l_Timers = {}
         self.l_SimpleTimers = {}
         self.l_NexthealthUpdate = 0
+        self.l_stucktimes = 0
+        self.NextFootstepTime = 0
+        self.l_stucktimereset = 0
         self.l_movepos = nil
         self.l_nextdoorcheck = 0
         self.l_nextUA = CurTime() + rand( 1, 15 ) -- Universal Action
@@ -124,15 +136,17 @@ function ENT:Initialize()
         
         self:SetVoicePitch( random( voicepitchmin:GetInt(), voicepitchmax:GetInt() ) )
 
+        local vpchance = voiceprofilechance:GetInt()
+        if vpchance > 0 and random( 1, 100 ) < vpchance then local vps = table_GetKeys( LambdaVoiceProfiles ) self.l_VoiceProfile = vps[ random( #vps ) ] end
+
         ----
 
         SortTable( self.l_Personality, function( a, b ) return a[ 2 ] > b[ 2 ] end )
 
-        self.loco:SetJumpHeight( 60 )
+        self.loco:SetJumpHeight( 80 )
         self.loco:SetAcceleration( 1000 )
         self.loco:SetDeceleration( 1000 )
         self.loco:SetStepHeight( 30 )
-
 
         self:PhysicsInitShadow()
         self:SetCollisionGroup( COLLISION_GROUP_PLAYER )
@@ -153,12 +167,14 @@ function ENT:Initialize()
         self.WeaponEnt:Spawn()
         self.WeaponEnt:SetNW2Vector( "lambda_weaponcolor", self:GetPhysColor() )
         self.WeaponEnt:SetNoDraw( true )
-
-        self:InitializeMiniHooks()
-        self:SwitchWeapon( "physgun" )
+        self:SetWeaponENT( self.WeaponEnt )
         self.l_SpawnWeapon = "physgun"
         
-        self:SetWeaponENT( self.WeaponEnt )
+        self:InitializeMiniHooks()
+        self:SwitchWeapon( "physgun", true )
+        
+        
+        
 
         self:HandleAllValidNPCRelations()
 
@@ -243,8 +259,17 @@ function ENT:Think()
     if SERVER then
         if self.l_ispickedupbyphysgun then self.loco:SetVelocity( Vector() ) end
 
+        if CurTime() > self.NextFootstepTime and self:IsOnGround() and !self.loco:GetVelocity():IsZero() then
+            local desSpeed = self.loco:GetDesiredSpeed()
+            local result = QuickTrace( self:WorldSpaceCenter(), self:GetUp() * -32600, self )
+            local stepsounds = _LAMBDAPLAYERSFootstepMaterials[ result.MatType ] or _LAMBDAPLAYERSFootstepMaterials[ MAT_DEFAULT ]
+            self:EmitSound( stepsounds[ random( #stepsounds ) ], 75, 100, 0.5 )
+            self.NextFootstepTime = CurTime() + min(0.25 * (400 / desSpeed), 0.35)
+        end
+        
         if CurTime() > self.l_nextidlesound and !self:IsSpeaking() and random( 1, 100 ) <= self:GetVoiceChance() then
-            self:PlaySoundFile( idledir:GetString() == "randomengine" and self:GetRandomSound() or idledir:GetString() .. "/*", true )
+            
+            self:PlaySoundFile( idledir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "idle" ), true )
             self.l_nextidlesound = CurTime() + 5
         end
         
@@ -258,6 +283,11 @@ function ENT:Think()
             phys:UpdateShadow( self:GetPos(), self:GetAngles(), 0 )
             self.l_nextphysicsupdate = CurTime() + 0.5
         end
+
+        if self.l_Clip < self.l_MaxClip and random( 100 ) == 1 and CurTime() > self.l_WeaponUseCooldown + 1 then
+            self:ReloadWeapon()
+        end
+        
 
         -- UA, Universal Actions
         -- See sv_x_universalactions.lua
@@ -274,6 +304,12 @@ function ENT:Think()
 
         if !self:IsOnGround() then
             self.l_FallVelocity = self.loco:GetVelocity()[ 3 ]
+            
+            -- Sometimes when they fall in water and touch a flat ground surface, they don't register it as being water
+            -- This is here just so if they enter water during the fall, it negates the damage
+            if self:WaterLevel() >= 1 then
+                self.l_FallVelocity = 0
+            end
         end
 
         -- Animations --
@@ -324,6 +360,36 @@ function ENT:Think()
             self:SetPoseParameter( 'aim_yaw', approachaimy )
             self:SetPoseParameter( 'aim_pitch', approachaimp )
         end
+
+
+        -- UNSTUCK --
+
+        if self.l_stucktimes > 0 and CurTime() > self.l_stucktimereset then
+            self.l_stucktimes = 0
+        end
+
+
+        if self.l_unstuck then
+            local mins, maxs = self:GetModelBounds()
+            local randompoint = self:GetPos() + VectorRand( -self.l_UnstuckBounds, self.l_UnstuckBounds )
+
+            unstucktable.start = randompoint
+            unstucktable.endpos = randompoint
+            unstucktable.mins = mins
+            unstucktable.maxs = maxs
+            local result = TraceHull( unstucktable )
+
+            if result.Hit then
+                self.l_UnstuckBounds = self.l_UnstuckBounds + 5
+            else
+                self:SetPos( randompoint )
+                self.loco:ClearStuck()
+                self.l_unstuck = false
+                self.l_UnstuckBounds = 50
+            end
+
+        end
+        -- -- -- -- --
 
 
     elseif CLIENT then

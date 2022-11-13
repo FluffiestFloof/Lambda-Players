@@ -100,6 +100,8 @@ local function UseLightTool( self, target )
 
     coroutine.wait( 1 )
 
+    if IsValid( trace.Entity ) and trace.Entity:GetClass()=="gmod_light" then return end -- Check to avoid placing light on light using trace
+
     self:UseWeapon( pos )
     local ent = CreateGmodEntity( "gmod_light", nil, pos + trace.HitNormal * 8, trace.HitNormal:Angle() - Angle( 90, 0, 0 ), self ) -- Create the light
     ent.LambdaOwner = self
@@ -249,6 +251,8 @@ local function UseBalloonTool( self, target )
 
     coroutine.wait( 1 )
 
+    if IsValid( trace.Entity ) and trace.Entity:GetClass()=="gmod_balloon" then return end -- Check to avoid placing balloon on balloon using trace
+
     self:UseWeapon( pos )
     local ent = CreateGmodEntity( "gmod_balloon", balloonModel.model, pos, nil, self ) -- Create the balloon
     ent.LambdaOwner = self
@@ -357,31 +361,7 @@ AddToolFunctionToLambdaTools( "Lamp", UseLampTool )
 
 
 
-local effectlist = {
-    "manhacksparks",
-    "glassimpact",
-    "striderblood",
-    "shells",
-    "cball_explode",
-    "ar2impact",
-    "bloodimpact",
-    "sparks",
-    "dirtywatersplash",
-    "watersplash",
-    "stunstickimpact",
-    "thumperdust",
-    "muzzleeffect",
-    "bloodspray",
-    "helicoptermegabomb",
-    "rifleshells",
-    "ar2explosion",
-    "explosion",
-    "cball_bounce",
-    "shotgunshells",
-    "underwaterexplosion",
-    "smoke",
-}
-
+local effectlist = { "manhacksparks", "glassimpact", "striderblood", "shells", "cball_explode", "ar2impact", "bloodimpact", "sparks", "dirtywatersplash", "watersplash", "stunstickimpact", "thumperdust", "muzzleeffect", "bloodspray", "helicoptermegabomb", "rifleshells", "ar2explosion", "explosion", "cball_bounce", "shotgunshells", "underwaterexplosion", "smoke" }
 local function UseEmitterTool( self, target )
     if !self:IsUnderLimit( "Emitter" ) then return end
 
@@ -393,6 +373,8 @@ local function UseEmitterTool( self, target )
 
     coroutine.wait( 1 )
 
+    if IsValid( trace.Entity ) and trace.Entity:GetClass()=="gmod_emitter" then return end -- Check to avoid placing emitter on emitter using trace
+    
     self:UseWeapon( pos )
     local ent = CreateGmodEntity( "gmod_emitter", "models/props_lab/tpplug.mdl", pos + trace.HitNormal, trace.HitNormal:Angle() - Angle( 0, 90, 90 ), self )
     ent.LambdaOwner = self
@@ -453,7 +435,7 @@ local function UseRopeTool( self, target )
     self:LookTo( ( secondent != world and secondent or lpos2 ), 2 )
 
     coroutine.wait( 1 )
-    if IsNil( secondent ) then return end
+    if IsNil( secondent ) or IsNil( firstent ) then return end
 
     self:UseWeapon( ( secondent != world and secondent:WorldSpaceCenter() or lpos2 ) )
 
@@ -485,7 +467,7 @@ AddToolFunctionToLambdaTools( "Rope", UseRopeTool )
 
 local hoverballmodels = { "models/dav0r/hoverball.mdl", "models/maxofs2d/hover_basic.mdl", "models/maxofs2d/hover_classic.mdl", "models/maxofs2d/hover_plate.mdl", "models/maxofs2d/hover_propeller.mdl", "models/maxofs2d/hover_rings.mdl" }
 local function UseHoverballTool( self, target )
-    if !self:IsUnderLimit( "Hoverball" ) or !IsValid( target ) then return end
+    if !self:IsUnderLimit( "Hoverball" ) or !IsValid( target ) or target:GetClass()=="gmod_hoverball" then return end
 
     self:LookTo( target, 2 )
 
@@ -493,6 +475,8 @@ local function UseHoverballTool( self, target )
     if !IsValid( target ) then return end
 
     local trace = self:Trace( target:WorldSpaceCenter() )
+
+    if IsValid( trace.Entity ) and trace.Entity:GetClass()=="gmod_hoverball" then return end -- Check to avoid placing hoverball on hoverball using trace
 
     local pos = trace.HitPos
 
@@ -505,7 +489,7 @@ local function UseHoverballTool( self, target )
 
     local const = constraint.Weld( ent, target, 0, trace.PhysicsBone, 0, 0, true )
 
-    if IsValid( ent:GetPhysicsObject() )  then ent:GetPhysicsObject():EnableCollisions( false ) end
+    if IsValid( ent:GetPhysicsObject() ) then ent:GetPhysicsObject():EnableCollisions( false ) end
     ent:SetCollisionGroup( COLLISION_GROUP_WORLD )
 
     local ang = trace.HitNormal:Angle()
@@ -541,6 +525,67 @@ AddToolFunctionToLambdaTools( "Hoverball", UseHoverballTool )
 
 
 
+local thrustermodels = { "models/dav0r/thruster.mdl", "models/MaxOfS2D/thruster_projector.mdl", "models/MaxOfS2D/thruster_propeller.mdl", "models/thrusters/jetpack.mdl", "models/props_junk/plasticbucket001a.mdl", "models/props_junk/PropaneCanister001a.mdl", "models/props_junk/propane_tank001a.mdl", "models/props_junk/PopCan01a.mdl", "models/props_junk/MetalBucket01a.mdl", "models/props_lab/jar01a.mdl", "models/props_c17/lampShade001a.mdl", "models/props_c17/canister_propane01a.mdl", "models/props_c17/canister01a.mdl", "models/props_c17/canister02a.mdl", "models/props_trainstation/trainstation_ornament002.mdl", "models/props_junk/TrafficCone001a.mdl", "models/props_c17/clock01.mdl", "models/props_junk/terracotta01.mdl", "models/props_c17/TrapPropeller_Engine.mdl", "models/props_c17/FurnitureSink001a.mdl", "models/props_trainstation/trainstation_ornament001.mdl", "models/props_trainstation/trashcan_indoor001b.mdl", "models/props_phx2/garbage_metalcan001a.mdl", "models/hunter/plates/plate.mdl", "models/hunter/blocks/cube025x025x025.mdl", "models/XQM/AfterBurner1.mdl", "models/XQM/AfterBurner1Medium.mdl", "models/XQM/AfterBurner1Big.mdl", "models/XQM/AfterBurner1Huge.mdl", "models/XQM/AfterBurner1Large.mdl" }
+local thrustersounds = { "", "PhysicsCannister.ThrusterLoop", "WeaponDissolve.Charge", "WeaponDissolve.Beam", "eli_lab.elevator_move", "combine.sheild_loop", "k_lab.ringsrotating", "k_lab.teleport_rings_high", "k_lab2.DropshipRotorLoop", "Town.d1_town_01_spin_loop" }
+local thrustereffects = { "none", "fire", "plasma", "magic", "rings", "smoke" }
+local function UseThrusterTool( self, target )
+    if !self:IsUnderLimit( "Thruster" ) or !IsValid( target ) or target:GetClass()=="gmod_thruster" then return end
+
+    self:LookTo( target, 2 )
+
+    coroutine.wait( 1 )
+    if !IsValid( target ) then return end
+
+    local trace = self:Trace( target:WorldSpaceCenter() )
+
+    if IsValid( trace.Entity ) and trace.Entity:GetClass()=="gmod_thruster" then return end -- Check to avoid placing thruster on thruster using trace
+
+    local pos = trace.HitPos
+    local ang = trace.HitNormal:Angle()
+	ang.pitch = ang.pitch + 90
+
+    self:UseWeapon( target:WorldSpaceCenter() )
+    local ent = CreateGmodEntity( "gmod_thruster", thrustermodels[ random( #thrustermodels ) ], pos, ang, self )
+    ent.LambdaOwner = self
+    ent.IsLambdaSpawned = true
+    self:ContributeEntToLimit( ent, "Thruster" )
+    table_insert( self.l_SpawnedEntities, 1, ent )
+
+    local min = ent:OBBMins()
+	ent:SetPos( trace.HitPos - trace.HitNormal * min.z )
+
+    local const = constraint.Weld( ent, target, 0, trace.PhysicsBone, 0, 0, true )
+
+    ent:SetPlayer( self )
+    ent:SetEffect( thrustereffects[ random( #thrustereffects ) ] )
+    ent:SetForce( random( 10000 ) )
+    ent:SetToggle( true )
+    ent:SetSound( thrustersounds[ random( #thrustersounds ) ] )
+
+    if random( 0, 1 ) == 1 then
+        if ( IsValid( ent:GetPhysicsObject() ) ) then ent:GetPhysicsObject():EnableCollisions( false ) end
+        ent:SetCollisionGroup( COLLISION_GROUP_WORLD ) -- Only nocollide to world if attached to something
+        ent:GetPhysicsObject():SetMass( Clamp( ent:GetPhysicsObject():GetMass(), 1, 20 ) ) -- If they are nocollided to the world, let's avoid them being too heavy
+    end
+
+    local rndtime = CurTime() + rand( 1, 10 )
+    ent:LambdaHookTick( "ThrusterRandomOnOff", function( thruster )
+        if CurTime() > rndtime then
+            if !IsValid( thruster ) then return true end
+            thruster:Switch( random( 0, 1 ) == 1 )-- Randomly switch it on or off
+
+            rndtime = CurTime() + rand( 1, 10 )
+        end
+    end )
+
+    return true
+end
+AddToolFunctionToLambdaTools( "Thruster", UseThrusterTool )
+
+
+
+
+
 local physproperties = { "metal_bouncy", "metal", "dirt", "slipperyslime", "wood", "glass", "concrete_block", "ice", "rubber", "paper", "zombieflesh", "gmod_ice", "gmod_bouncy" }
 local function UsePhysPropTool( self, target )
     if !IsValid( target ) then return end
@@ -563,6 +608,66 @@ local function UsePhysPropTool( self, target )
     return true
 end
 AddToolFunctionToLambdaTools( "PhysicalProperties", UsePhysPropTool )
+
+
+
+
+
+local function CanEntityBeSetOnFire( ent ) -- Taken from the ignite properties
+
+	-- func_pushable, func_breakable & func_physbox cannot be ignited
+	if ( ent:GetClass() == "item_item_crate" ) then return true end
+	if ( ent:GetClass() == "simple_physics_prop" ) then return true end
+	if ( ent:GetClass():match( "prop_physics*") ) then return true end
+	if ( ent:GetClass():match( "prop_ragdoll*") ) then return true end
+	if ( ent:IsNPC() ) then return true end
+
+	return false
+
+end
+local function UseIgniteTool( self, target ) -- Technically only a context menu right click tool
+    if !IsValid( target ) then return end
+
+    self:LookTo( target, 2 )
+
+    coroutine.wait( 1 )
+    if !IsValid( target ) or !CanEntityBeSetOnFire( target ) then return end
+    if target:IsOnFire() then target:Extinguish() else target:Ignite( 360 ) end
+
+
+    self:UseWeapon( target:WorldSpaceCenter() ) -- Not a 'real' tool but still want to see it happen
+
+    return true
+end
+AddToolFunctionToLambdaTools( "Ignite", UseIgniteTool )
+
+
+
+
+
+local function UseKeepUprightTool( self, target ) -- Technically only a context menu right click tool
+    if !IsValid( target ) or target:GetClass() != "prop_physics" then return end -- Only target props
+
+    self:LookTo( target, 2 )
+
+    coroutine.wait( 1 )
+    if !IsValid( target ) then return end
+    
+    local phys = target:GetPhysicsObjectNum( 0 )
+    if ( !IsValid( phys ) ) then return end
+
+    if target:GetNWBool( "IsUpright" ) then-- If we target a prop already keptupright, remove the constraint
+        constraint.RemoveConstraints( target, "Keepupright" )
+    else -- Otherwise apply the keepupright constraint
+        local const = constraint.Keepupright( target, phys:GetAngles(), 0, 999999 )
+        if const then target:SetNWBool( "IsUpright", true ) end
+    end
+
+    self:UseWeapon( target:WorldSpaceCenter() ) -- Not a 'real' tool but still want to see it happen
+
+    return true
+end
+AddToolFunctionToLambdaTools( "KeepUpright", UseKeepUprightTool )
 
 
 

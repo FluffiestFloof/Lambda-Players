@@ -7,9 +7,12 @@ local undo = undo
 local ents_GetAll = ents.GetAll
 local abs = math.abs
 local table_Merge = table.Merge
+local isfunction = isfunction
 local ipairs = ipairs
 local max = math.max
 local ceil = math.ceil
+local deathdir = GetConVar( "lambdaplayers_voice_deathdir" )
+local killdir = GetConVar( "lambdaplayers_voice_killdir" )
 local debugvar = GetConVar( "lambdaplayers_debug" )
 
 if SERVER then
@@ -43,7 +46,10 @@ if SERVER then
     function ENT:LambdaOnKilled( info )
         if self:GetIsDead() then return end
         self:DebugPrint( "was killed by ", info:GetAttacker() )
-        self:PlaySoundFile( "vo/npc/male01/pain0" .. random( 1, 9 ) .. ".wav" )
+
+        local deathsounds = LambdaVoiceLinesTable.death
+        
+        self:PlaySoundFile( deathdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "death" ) )
 
         self:SetIsDead( true )
         self:SetCollisionGroup( COLLISION_GROUP_IN_VEHICLE )
@@ -54,6 +60,8 @@ if SERVER then
         self:DrawShadow( false )
         self.WeaponEnt:SetNoDraw( true )
         self.WeaponEnt:DrawShadow( false )
+
+        self:SwitchWeapon( "none", true )
 
         self:GetPhysicsObject():EnableCollisions( false )
 
@@ -96,9 +104,7 @@ if SERVER then
 
         if ( self:ShouldTreatAsLPlayer( attacker ) and random( 1, 3 ) == 1 or !self:ShouldTreatAsLPlayer( attacker ) and true ) and self:CanTarget( attacker ) and self:GetEnemy() != attacker and attacker != self  then
             if !self:HasLethalWeapon() then self:SwitchToLethalWeapon() end
-            self:CancelMovement()
-            self:SetEnemy( attacker )
-            self:SetState( "Combat" )
+            self:AttackTarget( attacker )
         end
 
     end
@@ -107,14 +113,17 @@ if SERVER then
         local attacker = info:GetAttacker()
 
         if victim == self:GetEnemy() then
-            self:DebugPrint( "Enemy was killed ", victim )
+            self:DebugPrint( "Enemy was killed by", attacker )
             self:SetEnemy( nil )
             self:CancelMovement()
         end
 
         -- If we killed the victim
         if attacker == self then
+            local killlines = LambdaVoiceLinesTable.kill
             self:DebugPrint( "killed ", victim )
+
+            if random( 1, 100 ) <= self:GetVoiceChance() then self:PlaySoundFile( killdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "kill" ) ) end 
 
         else -- Someone else killed the victim
 
@@ -181,10 +190,12 @@ if SERVER then
     function ENT:OnSpawnedByPlayer( ply )
         local respawn = tobool( ply:GetInfoNum( "lambdaplayers_lambda_shouldrespawn", 0 ) )
         local weapon = ply:GetInfo( "lambdaplayers_lambda_spawnweapon" )
+        local voiceprofile = ply:GetInfo( "lambdaplayers_lambda_voiceprofile" )
 
         self:SetRespawn( ply:IsAdmin() or allowrespawn:GetBool() )
         self:SwitchWeapon( weapon )
         self.l_SpawnWeapon = weapon
+        self.l_VoiceProfile = voiceprofile != "" and voiceprofile or self.l_VoiceProfile
         
 
         self:DebugPrint( "Applied client settings from ", ply )
@@ -205,7 +216,7 @@ if SERVER then
             damage = 10
         end
 
-        if damage > 0 and self:WaterLevel() < 1 then
+        if damage > 0 then
             local info = DamageInfo()
             info:SetDamage( damage )
             info:SetAttacker( Entity( 0 ) )
@@ -244,6 +255,9 @@ function ENT:InitializeMiniHooks()
         -- To get around that we basically predict if the lambda is gonna die and completely block the damage so we don't actually die. This of course is exclusive to Respawning
         self:Hook( "EntityTakeDamage", "DamageHandling", function( target, info )
             if target != self then return end
+
+            if isfunction( self.l_OnDamagefunction ) then self.l_OnDamagefunction( self, self:GetWeaponENT(), info )  end
+
             local potentialdeath = ( self:Health() - info:GetDamage() ) <= 0
             if self:GetRespawn() and potentialdeath then
                 info:SetDamageBonus( 0 )

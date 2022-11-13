@@ -8,8 +8,8 @@ local CurTime = CurTime
 
 -- Switch to a weapon with the provided name.
 -- See the lambda/weapons folder for weapons. Check out the holster.lua file to see the current valid weapon settings
-function ENT:SwitchWeapon( weaponname )
-    if !self:CanEquipWeapon( weaponname ) or self.l_NoWeaponSwitch then return end
+function ENT:SwitchWeapon( weaponname, forceswitch )
+    if !self:CanEquipWeapon( weaponname ) and !forceswitch or self.l_NoWeaponSwitch then return end
     local weapondata = _LAMBDAPLAYERSWEAPONS[ weaponname ]
     if !weapondata or weaponname == self.l_Weapon then return end
 
@@ -28,6 +28,7 @@ function ENT:SwitchWeapon( weaponname )
     self.l_HoldType = weapondata.holdtype
     self.l_CombatKeepDistance = weapondata.keepdistance
     self.l_CombatAttackRange = weapondata.attackrange
+    self.l_OnDamagefunction = weapondata.OnDamage
     self.l_CombatSpeedAdd = weapondata.addspeed or 0
     self.l_Clip = weapondata.clip or 0
     self.l_MaxClip = weapondata.clip or 0
@@ -194,7 +195,7 @@ end
 function ENT:HandleMuzzleFlash( type, offpos, offang )
     local wepent = self:GetWeaponENT()
     local attach = wepent:GetAttachment( 1 )
-    if !attach and offpos and offang then attach = { Pos = offpos, Ang = offang } elseif !attach and ( offpos or offang ) then return end
+    if !attach and offpos and offang then attach = { Pos = offpos, Ang = offang } elseif !attach and ( !offpos or !offang ) then return end
     if !IsValid( wepent ) then return end
     local effect = EffectData()
     effect:SetOrigin( attach.Pos )

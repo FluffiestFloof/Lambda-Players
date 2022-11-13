@@ -20,7 +20,9 @@ end
 local combattbl = { update = 0.2 }
 
 function ENT:Combat()
-    if !LambdaIsValid( self:GetEnemy() ) or !self:HasLethalWeapon() then self:SetState( "Idle" ) return end
+    if !LambdaIsValid( self:GetEnemy() ) then self:SetState( "Idle" ) return end
+
+    if !self:HasLethalWeapon() then self:SwitchToLethalWeapon() end
 
     self:Hook( "Tick", "CombatTick", function()
         if !LambdaIsValid( self:GetEnemy() ) or self:GetState() != "Combat" then return "end" end -- Returns and removes this hook because we returned "end". See sh_util.lua for source
@@ -54,9 +56,7 @@ function ENT:FindTarget()
         local find = self:FindInSphere( nil, 1500, function( ent ) return self:CanTarget( ent ) end )
 
         for k, v in RandomPairs( find ) do
-            self:SetEnemy( v )
-            self:SetState( "Combat" )
-            self:CancelMovement()
+            self:AttackTarget( v )
             break
         end
 

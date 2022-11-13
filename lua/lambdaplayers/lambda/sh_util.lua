@@ -18,6 +18,7 @@ local timer_simple = timer.Simple
 local timer_create = timer.Create
 local istable = istable
 local timer_Remove = timer.Remove
+local coroutine = coroutine
 local Trace = util.TraceLine
 local table_add = table.Add
 local EndsWith = string.EndsWith
@@ -27,7 +28,9 @@ local tostring = tostring
 local visibilitytrace = {}
 local tracetable = {}
 local GetLambdaPlayers = GetLambdaPlayers
+local tauntdir = GetConVar( "lambdaplayers_voice_tauntdir" )
 local debugcvar = GetConVar( "lambdaplayers_debug" )
+local rasp = GetConVar( "lambdaplayers_lambda_respawnatplayerspawns" )
 
 ---- Anything Shared can go here ----
 
@@ -59,6 +62,25 @@ end
 function ENT:RemoveHook( hookname, uniquename )
     self:DebugPrint( "Removed a hook: " .. hookname .. " | " .. uniquename )
     hook.Remove( hookname, "lambdaplayershook" .. self:EntIndex() .. "_" .. uniquename )
+end
+
+-- Creates a coroutine thread
+function ENT:Thread( func, name, preserve )
+	local thread = coroutine.create( func )
+    self:DebugPrint( "Created a Thread | " .. name  )
+	self:Hook( "Tick", "CoroutineThread_" .. name, function()
+		if coroutine.status( thread ) != "dead" then
+			local ok, msg = coroutine.resume( thread )
+            if !ok then ErrorNoHaltWithStack( self, " ", msg ) end
+		else
+			self:RemoveHook( "Tick", "CoroutineThread_" .. name )
+		end
+	end, preserve, 0 )
+end
+
+-- Kills the specified thread, making it stop running
+function ENT:KillThread( name )
+    self:RemoveHook( "Tick", "CoroutineThread_" .. name )
 end
 
 -- Creates a simple timer that won't run if we are invalid or dead. ignoredead var will run the timer even if self:GetIsDead() is true
@@ -153,7 +175,7 @@ function ENT:GetAttachmentPoint( pointtype )
                 return { Pos = self:WorldSpaceCenter(), Ang = self:GetForward():Angle() }
             else
                 if isnumber( bone ) then
-                    return self:GetBonePosAngs( bone )
+                    return self:GetBoneTransformation( bone )
                 else
                     return { Pos = self:WorldSpaceCenter(), Ang = self:GetForward():Angle() }
                 end
@@ -201,6 +223,7 @@ function ENT:ExportLambdaInfo()
         --
 
         voicepitch = self:GetVoicePitch(),
+        voiceprofile = self.l_VoiceProfile,
 
         -- Non personal data --
         respawn = self:GetRespawn(),
@@ -249,6 +272,7 @@ if SERVER then
             SortTable( self.l_Personality, function( a, b ) return a[ 2 ] > b[ 2 ] end )
 
             self:SetVoicePitch( info.voicepitch or self:GetVoicePitch() )
+            self.l_VoiceProfile = info.voiceprofile or self.l_VoiceProfile
 
             -- Non Personal Data --
 
@@ -275,6 +299,15 @@ if SERVER then
     -- If the we can target the ent
     function ENT:CanTarget( ent )
         return self:Visible( ent ) and ( ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer() and !ignoreplayer:GetBool() )
+    end
+
+    -- Attacks the specified entity
+    function ENT:AttackTarget( ent )
+        local tauntsounds = LambdaVoiceLinesTable.taunt
+        if random( 1, 100 ) <= self:GetVoiceChance() then self:PlaySoundFile( tauntdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "taunt" ), true ) end
+        self:SetEnemy( ent )
+        self:SetState( "Combat" )
+        self:CancelMovement()
     end
 
     -- Updates our networked health
@@ -329,7 +362,7 @@ if SERVER then
     -- Performs a Trace from ourselves to the postion
     function ENT:Trace( pos )
         tracetable.start = self:WorldSpaceCenter()
-        tracetable.endpos = pos
+        tracetable.endpos = ( isentity( pos ) and IsValid( pos ) and pos:GetPos() or pos )
         tracetable.filter = self 
         return Trace( tracetable )
     end
@@ -355,7 +388,7 @@ if SERVER then
         self:DebugPrint( "Respawned" )
         self:SetIsDead( false )
         self:SetIsReloading( false )
-        self:SetPos( self.l_SpawnPos )
+        self:SetPos( rasp:GetBool() and LambdaSpawnPoints[ random( #LambdaSpawnPoints ) ]:GetPos() or self.l_SpawnPos ) -- Rasp aka Respawn at Spawn Points
         self:SetCollisionGroup( COLLISION_GROUP_PLAYER )
         self:GetPhysicsObject():EnableCollisions( true )
 
@@ -380,7 +413,7 @@ if SERVER then
         net.Broadcast()
     end
 
-    -- Returns a sequential table full of nav areas new the position
+    -- Returns a sequential table full of nav areas near the position
     function ENT:GetNavAreas( pos, dist )
         pos = pos or self:GetPos()
         dist = dist or 1500
@@ -441,12 +474,27 @@ if SERVER then
         return ""
     end
 
+    -- Retrieves a voice line from our Voice Profile or the Voicelines table
+    function ENT:GetVoiceLine( voicetype )
+        if self.l_VoiceProfile then
+            if LambdaVoiceProfiles[ self.l_VoiceProfile ] then
+                local vptable = LambdaVoiceProfiles[ self.l_VoiceProfile ][ voicetype ]
+                if vptable and #vptable > 0 then
+                    return vptable[ random( #vptable ) ]
+                end
+            end
+        end
+        local tbl = LambdaVoiceLinesTable[ voicetype ]
+
+        return tbl[ random( #tbl ) ] 
+    end
+
     -- Makes the Lambda say the specified file or file path.
     -- Random sound files for example, something/idle/*
     function ENT:PlaySoundFile( filepath, stoponremove )
-        local isdir = string_find( filepath, "/*" )
+        local isdir = string_find( filepath or "", "/*" )
 
-        self:SetLastSpeakingTime( CurTime() + 2 )
+        self:SetLastSpeakingTime( CurTime() + 4 )
 
         if isdir then
             local soundfiles = file_Find( "sound/" .. filepath, "GAME", "nameasc" )
