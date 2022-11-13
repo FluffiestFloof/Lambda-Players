@@ -112,7 +112,7 @@ function ENT:Initialize()
 
         -- Personal Stats --
         
-        self:SetLambdaName( LambdaPlayerNames[ random( #LambdaPlayerNames ) ] )
+        self:SetLambdaName( self:GetOpenName() )
         self:SetProfilePicture( #Lambdaprofilepictures > 0 and Lambdaprofilepictures[ random( #Lambdaprofilepictures ) ] or "spawnicons/".. sub( self:GetModel(), 1, #self:GetModel() - 4 ).. ".png" )
 
         self:SetMaxHealth( 100 )
@@ -214,6 +214,7 @@ function ENT:Initialize()
 
     self:LambdaMoveMouth( 0 )
 
+    hook.Run( "LambdaOnInitialize", self, self:GetWeaponENT() )
 end
 
 
@@ -256,6 +257,8 @@ end
 function ENT:Think()
     if self:GetIsDead() then return end
 
+    -- Allow addons to add stuff to Lambda's Think
+    hook.Run( "LambdaOnThink", self, self:GetWeaponENT() )
     
     if SERVER then
         if self.l_ispickedupbyphysgun then self.loco:SetVelocity( Vector() ) end
