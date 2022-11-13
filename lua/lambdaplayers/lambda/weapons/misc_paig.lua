@@ -23,7 +23,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
 
         OnEquip = function( lambda, wepent )
-            if IsMounted('tf') then tf2=true end -- If user doesn't have TF2, the convar is pretty much useless
+            if IsMounted('tf') then tf2=true end -- If user doesn't have TF2, don't do anything special with PAIG
 
             if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
@@ -36,13 +36,13 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         end,
 
         OnUnequip = function( lambda, wepent )
-            lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+            if tf2 then lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" ) end
         end,
 
         -- Stop sound on death
         OnDamage = function( lambda, wepent, dmginfo )
-            print(lambda:Health())
             if IsValid( lambda ) and lambda:GetIsDead() then
+                lambda:ManipulateBoneAngles( lambda:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) )
                 lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
             end
         end,
@@ -53,18 +53,14 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
             if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
+                
                 wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
                 self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
 
-                --[[self:Hook( "Think", "PAIGSpin", function( )
-                    self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, RealTime() * 460 ) )
-                    print(self:Health())
-                    if self:Health() < 1 then -- very hacky fix
-                        self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, RealTime()*0 ) )
-                        self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
-                        self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
-                    end
-                end, nil, 0.001)]] -- An interesting idea that cause more problem than it's worth
+                -- Simulate the Sentry Buster spin. Might cause issues?
+                self:Hook( "Think", "PAIGSpin", function( )
+                    self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, CurTime() * 600 ) )
+                end, nil, 0.001)
             else
                 wepent:EmitSound( "WeaponFrag.Throw", 70 )
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
@@ -76,14 +72,13 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     v:SimpleTimer( Rand( 0.1, 0.5 ), function()
                         if LambdaIsValid( v ) then return end
                         --v:SetState( "Panic" )
-                        --v:GetRandomSound()
                         --Play random scream
                     end)
                 end
             end]]
             
             self:SimpleTimer( dur, function()
-                if !IsValid( self ) or !IsValid( wepent ) then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) return end
+                if !IsValid( self ) or !IsValid( wepent ) then if tf2 then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) end return end
                 
                 local effect = EffectData()
                 effect:SetOrigin( wepent:GetPos() )
