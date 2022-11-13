@@ -18,6 +18,7 @@ local timer_simple = timer.Simple
 local timer_create = timer.Create
 local istable = istable
 local timer_Remove = timer.Remove
+local coroutine = coroutine
 local Trace = util.TraceLine
 local table_add = table.Add
 local EndsWith = string.EndsWith
@@ -61,6 +62,19 @@ end
 function ENT:RemoveHook( hookname, uniquename )
     self:DebugPrint( "Removed a hook: " .. hookname .. " | " .. uniquename )
     hook.Remove( hookname, "lambdaplayershook" .. self:EntIndex() .. "_" .. uniquename )
+end
+
+-- Creates a coroutine thread
+function ENT:Thread( func, name, preserve )
+	local thread = coroutine.create( func )
+    self:DebugPrint( "Created a Thread | " .. name  )
+	self:Hook( "Tick", "CoroutineThread_" .. name, function()
+		if coroutine.status( thread ) != "dead" then
+			coroutine.resume( thread )
+		else
+			self:RemoveHook( "Tick", "CoroutineThread_" .. name )
+		end
+	end, preserve, 0 )
 end
 
 -- Creates a simple timer that won't run if we are invalid or dead. ignoredead var will run the timer even if self:GetIsDead() is true
@@ -203,6 +217,7 @@ function ENT:ExportLambdaInfo()
         --
 
         voicepitch = self:GetVoicePitch(),
+        voiceprofile = self.l_VoiceProfile,
 
         -- Non personal data --
         respawn = self:GetRespawn(),
@@ -251,6 +266,7 @@ if SERVER then
             SortTable( self.l_Personality, function( a, b ) return a[ 2 ] > b[ 2 ] end )
 
             self:SetVoicePitch( info.voicepitch or self:GetVoicePitch() )
+            self.l_VoiceProfile = info.voiceprofile or self.l_VoiceProfile
 
             -- Non Personal Data --
 
@@ -282,7 +298,7 @@ if SERVER then
     -- Attacks the specified entity
     function ENT:AttackTarget( ent )
         local tauntsounds = LambdaVoiceLinesTable.taunt
-        if random( 1, 100 ) <= self:GetVoiceChance() then self:PlaySoundFile( tauntdir:GetString() == "randomengine" and self:GetRandomSound() or tauntsounds[ random( #tauntsounds ) ], true ) end
+        if random( 1, 100 ) <= self:GetVoiceChance() then self:PlaySoundFile( tauntdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "taunt" ), true ) end
         self:SetEnemy( ent )
         self:SetState( "Combat" )
         self:CancelMovement()
@@ -391,7 +407,7 @@ if SERVER then
         net.Broadcast()
     end
 
-    -- Returns a sequential table full of nav areas new the position
+    -- Returns a sequential table full of nav areas near the position
     function ENT:GetNavAreas( pos, dist )
         pos = pos or self:GetPos()
         dist = dist or 1500
@@ -450,6 +466,21 @@ if SERVER then
         end
 
         return ""
+    end
+
+    -- Retrieves a voice line from our Voice Profile or the Voicelines table
+    function ENT:GetVoiceLine( voicetype )
+        if self.l_VoiceProfile then
+            if LambdaVoiceProfiles[ self.l_VoiceProfile ] then
+                local vptable = LambdaVoiceProfiles[ self.l_VoiceProfile ][ voicetype ]
+                if vptable and #vptable > 0 then
+                    return vptable[ random( #vptable ) ]
+                end
+            end
+        end
+        local tbl = LambdaVoiceLinesTable[ voicetype ]
+
+        return tbl[ random( #tbl ) ] 
     end
 
     -- Makes the Lambda say the specified file or file path.

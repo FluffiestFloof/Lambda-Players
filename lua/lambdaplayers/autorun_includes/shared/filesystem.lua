@@ -147,6 +147,13 @@ function LAMBDAFS:GetMaterialTable()
     local customcontent = LAMBDAFS:ReadFile( "lambdaplayers/custommaterials.json", "json" ) or {}
     local defaultcontent = LAMBDAFS:ReadFile( "materials/lambdaplayers/data/materials.vmt", "json", "GAME" )
     local mergedtable = table_Add( defaultcontent, customcontent )
+
+    local overridemats = list.Get( "OverrideMaterials" )
+
+    for k, v in ipairs( overridemats ) do
+        if !table_HasValue( defaultcontent, v ) then table_insert( defaultcontent, v ) end
+    end
+
     return mergedtable
 end
 
@@ -190,3 +197,41 @@ function LAMBDAFS:GetProfilePictures()
     
     return Lambdaprofilepictures
 end
+
+
+local validvoicetypes = { "death", "kill", "idle", "taunt" }
+function LAMBDAFS:GetVoiceProfiles()
+    local LambdaVoiceProfiles = {}
+
+    local _,voiceprofiles  = file.Find( "sound/lambdaplayers/voiceprofiles/*", "GAME", "nameasc" )
+
+    for i, profile in ipairs( voiceprofiles ) do
+        LambdaVoiceProfiles[ profile ] = {} 
+
+        for k, v in ipairs( validvoicetypes ) do 
+            local voicelines,_  = file.Find( "sound/lambdaplayers/voiceprofiles/" .. profile .. "/" .. v .. "/*", "GAME", "nameasc" )
+
+            if voicelines and #voicelines > 0 then
+                LambdaVoiceProfiles[ profile ][ v ] = {}
+                for index, voiceline in ipairs( voicelines ) do
+                    table_insert( LambdaVoiceProfiles[ profile ][ v ], "lambdaplayers/voiceprofiles/" .. profile .. "/" .. v .. "/" .. voiceline )
+                end
+            else
+                LambdaVoiceProfiles[ profile ][ v ] = LambdaVoiceLinesTable[ v ]
+            end
+
+        end
+
+    end
+
+    
+    return LambdaVoiceProfiles
+end
+
+
+LambdaPlayerNames = LambdaPlayerNames or LAMBDAFS:GetNameTable()
+LambdaPlayerProps = LambdaPlayerProps or LAMBDAFS:GetPropTable()
+LambdaPlayerMaterials = LambdaPlayerMaterials or LAMBDAFS:GetMaterialTable()
+Lambdaprofilepictures = Lambdaprofilepictures or LAMBDAFS:GetProfilePictures()
+LambdaVoiceLinesTable = LambdaVoiceLinesTable or LAMBDAFS:GetVoiceLinesTable()
+LambdaVoiceProfiles = LambdaVoiceProfiles or LAMBDAFS:GetVoiceProfiles()

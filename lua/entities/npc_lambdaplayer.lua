@@ -5,6 +5,10 @@ ENT.PrintName = "Lambda Player"
 ENT.Author = "StarFrost"
 ENT.IsLambdaPlayer = true
 
+local include = include
+local print = print
+local AddCSLuaFile = AddCSLuaFile
+
 --- Include files based on sv_ sh_ or cl_
 local ENTFiles = file.Find( "lambdaplayers/lambda/*", "LUA", "nameasc" )
 
@@ -44,11 +48,14 @@ end
     local Vector = Vector
     local coroutine = coroutine
     local debugoverlay = debugoverlay
+    local table_Random = table.Random
+    local table_GetKeys = table.GetKeys
     local voicepitchmin = GetConVar( "lambdaplayers_voice_voicepitchmin" )
     local voicepitchmax = GetConVar( "lambdaplayers_voice_voicepitchmax" )
     local idledir = GetConVar( "lambdaplayers_voice_idledir" )
     local drawflashlight = GetConVar( "lambdaplayers_drawflashlights" )
     local allowaddonmodels = GetConVar( "lambdaplayers_lambda_allowrandomaddonsmodels" ) 
+    local voiceprofilechance = GetConVar( "lambdaplayers_lambda_voiceprofileusechance" )
     local _LAMBDAPLAYERSFootstepMaterials = _LAMBDAPLAYERSFootstepMaterials
     local CurTime = CurTime
     local min = math.min
@@ -67,14 +74,6 @@ if CLIENT then
     language.Add( "npc_lambdaplayer", "Lambda Player" )
 
 end
-
--- Since Entities are loaded near the end of the Lua Loading Order, we can safely know that the File system exists.
--- We move this here knowing that so this doesn't have to be updated everytime a lambda is initialized
-LambdaPlayerNames = LambdaPlayerNames or LAMBDAFS:GetNameTable()
-LambdaPlayerProps = LambdaPlayerProps or LAMBDAFS:GetPropTable()
-LambdaPlayerMaterials = LambdaPlayerMaterials or LAMBDAFS:GetMaterialTable()
-Lambdaprofilepictures = Lambdaprofilepictures or LAMBDAFS:GetProfilePictures()
-LambdaVoiceLinesTable = LambdaVoiceLinesTable or LAMBDAFS:GetVoiceLinesTable()
 
 function ENT:Initialize()
 
@@ -136,6 +135,9 @@ function ENT:Initialize()
         
         
         self:SetVoicePitch( random( voicepitchmin:GetInt(), voicepitchmax:GetInt() ) )
+
+        local vpchance = voiceprofilechance:GetInt()
+        if vpchance > 0 and random( 1, 100 ) < vpchance then local vps = table_GetKeys( LambdaVoiceProfiles ) self.l_VoiceProfile = vps[ random( #vps ) ] end
 
         ----
 
@@ -262,11 +264,10 @@ function ENT:Think()
             self:EmitSound( stepsounds[ random( #stepsounds ) ], 75, 100, 0.5 )
             self.NextFootstepTime = CurTime() + min(0.25 * (400 / desSpeed), 0.35)
         end
-
+        
         if CurTime() > self.l_nextidlesound and !self:IsSpeaking() and random( 1, 100 ) <= self:GetVoiceChance() then
-            local idlesounds = LambdaVoiceLinesTable.idle
             
-            self:PlaySoundFile( idledir:GetString() == "randomengine" and self:GetRandomSound() or idlesounds[ random( #idlesounds ) ], true )
+            self:PlaySoundFile( idledir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "idle" ), true )
             self.l_nextidlesound = CurTime() + 5
         end
         
