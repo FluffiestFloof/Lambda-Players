@@ -26,11 +26,10 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 local find = lambda:FindInSphere( lambda:GetPos(), 150, function( ent ) if !ent:IsNPC() and ent:GetClass()=="prop_physics" and !ent:IsPlayer() and !ent:IsNextBot() and lambda:CanSee( ent ) and IsValid( ent:GetPhysicsObject() ) and lambda:HasPermissionToEdit( ent ) then return true end end )
                 local prop = find[ random( #find ) ]
 
-                lambda:LookTo( prop, 2 )
+                lambda:LookTo( prop, 3 )
 
                 lambda:SimpleTimer( 1, function() -- To let the lambda aim properly
                     if !IsValid( prop ) then return end
-                    lambda:LookTo( prop, 2 ) -- Probably excessive?
                     lambda:UseWeapon( prop )
                 end)
             
@@ -39,7 +38,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         callback = function( self, wepent, target )
             local trace = self:Trace( target:WorldSpaceCenter() )
-            
+
             local phys = target:GetPhysicsObjectNum(0)
 
             if IsValid( phys ) then
@@ -70,12 +69,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 end
 
                 local muzzle = wepent:GetAttachment( wepent:LookupAttachment( "core" ) )
-
-                tracetbl.start = muzzle.Pos
-                tracetbl.endpos = target
-                tracetbl.filter = self
-
-                local result = TraceLine( tracetbl )
 
                 -- Punt beam. Placeholder but close enough.
                 local effect = EffectData()
