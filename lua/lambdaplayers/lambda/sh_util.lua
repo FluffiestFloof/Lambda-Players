@@ -298,7 +298,7 @@ if SERVER then
     
     -- If the we can target the ent
     function ENT:CanTarget( ent )
-        return self:Visible( ent ) and ( ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer() and !ignoreplayer:GetBool() )
+        return self:Visible( ent ) and ( ent:IsNPC() or ent:IsNextBot() or ent:IsPlayer() and !ignoreplayer:GetBool() and ent:Alive() )
     end
 
     -- Attacks the specified entity
@@ -308,6 +308,30 @@ if SERVER then
         self:SetEnemy( ent )
         self:SetState( "Combat" )
         self:CancelMovement()
+    end
+
+    function ENT:LaughAt( pos )
+        pos = ( isentity( pos ) and IsValid( pos ) and pos:GetPos() or pos)
+        self:LookTo( pos, 2 )
+        self:CancelMovement()
+        self:SetState( "Laughing" )
+    end
+
+    function ENT:PlaySequenceAndWait( name, speed )
+
+        self.l_UpdateAnimations = false
+        local len = self:SetSequence( name )
+        speed = speed or 1
+    
+        self:ResetSequenceInfo()
+        self:SetCycle( 0 )
+        self:SetPlaybackRate( speed )
+    
+        -- wait for it to finish
+        coroutine.wait( len / speed )
+        
+        self.l_UpdateAnimations = true
+    
     end
 
     -- Updates our networked health
