@@ -5,7 +5,9 @@ local IsValid = IsValid
 local Effect = util.Effect
 local ScreenShake = util.ScreenShake
 local BlastDamage = util.BlastDamage
---local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG have the ability to act like the Sentry Buster from TF2.", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
+
+local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG should act like the Sentry Buster. TF2 REQUIRED!", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
+local tf2 = false
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
