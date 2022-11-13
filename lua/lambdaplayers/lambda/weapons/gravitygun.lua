@@ -69,7 +69,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         end,
 
         OnEquip = function( lambda, wepent )
-            -- Pretty much will punt everything they get close to
+            -- Pretty much will punt any prop they get close to
             lambda:Hook( "Think", "GravityGunPuntThink", function( )
                 local find = lambda:FindInSphere( lambda:GetPos(), 150, function( ent ) if !ent:IsNPC() and ent:GetClass()=="prop_physics" and !ent:IsPlayer() and !ent:IsNextBot() and lambda:CanSee( ent ) and IsValid( ent:GetPhysicsObject() ) and lambda:HasPermissionToEdit( ent ) and ent:GetPhysicsObject():IsMoveable() then return true end end )
                 local prop = find[ random( #find ) ]
@@ -81,12 +81,11 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     lambda:UseWeapon( prop )
                 end)
             
-            end, nil, 0.5) -- Let's not think too much GO BACK TO 2
+            end, true, 1) -- "Attack" prop twice then do another check (1)
         end,
 
         callback = function( self, wepent, target )
             self.l_WeaponUseCooldown = CurTime() + 0.4
-            local trace = self:Trace( target:WorldSpaceCenter() )
 
             local phys = target:GetPhysicsObjectNum(0)
 
@@ -119,42 +118,41 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 ]]-- If we ever want to punt ragdolls
 
                 local mainPhys = target:GetPhysicsObject()
+                local trace = self:Trace( target:WorldSpaceCenter() )
+                local randt1 = self:Trace( target:WorldSpaceCenter() + VectorRand(-5, 15) )
 
                 mainPhys:ApplyForceCenter( self:GetAimVector() * 15000)
                 mainPhys:ApplyForceOffset( self:GetAimVector() * math_min( mainPhys:GetMass(), 250) * 600, trace.HitPos)
 
                 local core = wepent:GetAttachment( wepent:LookupAttachment( "core" ) )
 
-                -- Punt beam. Placeholder but close enough.
+                -- Fine, I shall do it myself source
+                -- See lua/effects/gravitygunbeam and gravitygunblast
+
+                -- Simulate the punt beam blast
                 local effectBeam = EffectData()
                     effectBeam:SetStart( core.Pos )
-                    effectBeam:SetOrigin( target:WorldSpaceCenter() )
+                    effectBeam:SetOrigin( trace.HitPos ) 
                     effectBeam:SetEntity( wepent )
-                    effectBeam:SetScale( 4000 )
-                util_Effect( "gravitygun", effectBeam, true, true)
-                --util_Effect( "gravitygunpunt", effectBeam, true, true)
+                util_Effect( "gravitygunbeam", effectBeam, true, true) -- Beam 1 to center of target
+                local effectBlast = EffectData()
+                    effectBlast:SetStart( core.Pos )
+                    effectBlast:SetOrigin( core.Pos )
+                    effectBlast:SetEntity( wepent )
+                util_Effect( "gravitygunblast", effectBlast, true, true) -- Blast effect from Gravity gun
 
                 -- Simulate the spark that emits from punted object
                 local effectSpark = EffectData()
                     effectSpark:SetOrigin( trace.HitPos )
                     effectSpark:SetNormal( trace.HitNormal )
                     effectSpark:SetScale(2)
-                util_Effect( "MetalSpark", effectSpark, true, true)
-                local effectSpark = EffectData()
+                util_Effect( "MetalSpark", effectSpark, true, true) -- 
                     effectSpark:SetOrigin( trace.HitPos )
                     effectSpark:SetNormal( trace.HitNormal )
                     effectSpark:SetScale(2)
-                    effectSpark:SetMagnitude(2)
-                    effectSpark:SetRadius(5)
+                    effectSpark:SetMagnitude(3)
+                    effectSpark:SetRadius(4)
                 util_Effect( "Sparks", effectSpark, true, true)
-
-                -- Punt glow. Placeholder.
-                --[[local effectGlow = EffectData()
-                effectGlow:SetStart( core.Pos )
-                effectGlow:SetEntity( wepent )
-                effectGlow:SetFlags(1)
-                util_Effect( "MuzzleFlash", effectGlow, true, true)]]
-                blastTarget = target:WorldSpaceCenter()
             else
                 wepent:EmitSound( "weapons/physcannon/physcannon_dryfire.wav", 70 )
             end
