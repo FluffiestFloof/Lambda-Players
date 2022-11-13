@@ -22,13 +22,13 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
 
         OnEquip = function( lambda, wepent )
-            if IsMounted('tf') then tf2=true end
+            if IsMounted('tf') then tf2=true end -- If user doesn't have TF2, the convar is pretty much useless
 
             if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
                 --[[lambda:SimpleTimer( 0.3, function()
                     lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
-                end)]] -- I hate loops.
+                end)]] -- I hate loops. Can't get it to properly go away...
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
             end
@@ -54,7 +54,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                         self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
                         self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
                     end
-                end, nil, 0.001)]]
+                end, nil, 0.001)]] -- An interesting idea that cause more problem than it's worth
             else
                 wepent:EmitSound( "WeaponFrag.Throw", 70 )
                 self:RemoveGesture( ACT_HL2MP_GESTURE_RANGE_ATTACK_GRENADE )
@@ -71,8 +71,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     end)
                 end
             end]]
-            
-            --ValveBiped.Bip01_Spine
             
             self:SimpleTimer( dur, function()
                 if !IsValid( self ) or !IsValid( wepent ) then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) return end
