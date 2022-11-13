@@ -1,13 +1,10 @@
 local random = math.random
 local math_min = math.min
 local IsValid = IsValid
-local TraceLine = util.TraceLine
 local util_Effect = util.Effect
 local tracetbl = {}
 
--- Effects for punting
-local ggunBeamSprite = Material("sprites/orangelight1")
-local ggunBlastSprite = Material("sprites/orangecore2")
+-- Effects idle gravity gun
 local ggunGlowSprite = Material("sprites/glow04_noz")
 
 -- Effects for pulling and grabbing active
@@ -28,7 +25,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         bonemerge = true,
         holdtype = "physgun",
 
-        -- ._.
         Draw = function( lambda, wepent )
             if IsValid( wepent ) then
                 local attachtab = { "fork1m", "fork1t", "fork2m", "fork2t", "fork3m", "fork3t" }
@@ -40,7 +36,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                     render.DrawSprite( at.Pos, 6, 6, Color(255, 128, 0, 64) )
                 end
 
-                -- For pulling and grabbing active
+                -- For pulling and grabbing active effect
                 --[[render.SetMaterial( ggunCapSprite )
                 render.DrawSprite( wepent:GetAttachment( wepent:LookupAttachment( "fork1t" ) ).Pos, size, size, Color(255,255,255,255) )
                 render.DrawSprite( wepent:GetAttachment( wepent:LookupAttachment( "fork2t" ) ).Pos, size, size, Color(255,255,255,255) )
@@ -49,22 +45,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 render.SetMaterial( ggunCoreSprite )
                 render.DrawSprite( wepent:GetAttachment( wepent:LookupAttachment( "core" ) ).Pos, 13, 13, Color(255,255,255,255) )
                 ]]
-
-
-                --[[    render.SetMaterial( ggunBeamSprite )
-                    render.DrawBeam( wepent:GetAttachment( wepent:LookupAttachment( "core" ) ).Pos, wepent:GetAttachment( wepent:LookupAttachment( "core" ) ).Pos + Vector(500,0,0), 2, 0, 30, Color( 255, 255, 255, 128 ) )
-                if smoothBlast!=70 then
-                    smoothBlast = Lerp( ( CurTime() - blastStart ) / 0.2, 13, 70 )
-                    smoothBlastA = Lerp( ( CurTime() - blastStart ) / 0.2, 255, 0 )
-                    render.SetMaterial( ggunBlastSprite )
-                    render.DrawSprite( wepent:GetAttachment( wepent:LookupAttachment( "core" ) ).Pos, smoothBlast, smoothBlast, ColorAlpha(color, smoothBlastA) )
-                elseif smoothBlast==70 and smoothBlastA==0 then
-                    --putted = false
-                    blastStart = CurTime()
-                    smoothBlast = 0
-                    smoothBlastA = 255
-                end
-                print(smoothBlast)]]
             end
         end,
 
@@ -126,9 +106,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 local core = wepent:GetAttachment( wepent:LookupAttachment( "core" ) )
 
-                -- Fine, I shall do it myself source
                 -- See lua/effects/gravitygunbeam and gravitygunblast
-
                 -- Simulate the punt beam blast
                 local effectBeam = EffectData()
                     effectBeam:SetStart( core.Pos )
