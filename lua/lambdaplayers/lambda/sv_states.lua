@@ -17,7 +17,7 @@ function ENT:Idle()
     end
 end
 
-local combattbl = { update = 0.2 }
+local combattbl = { update = 0.2, run = true }
 
 function ENT:Combat()
     if !LambdaIsValid( self:GetEnemy() ) then self:SetState( "Idle" ) return end
@@ -42,14 +42,13 @@ function ENT:Combat()
     
     end )
 
-    combattbl.speed = self:GetRunSpeed() + self.l_CombatSpeedAdd
-
     self:MoveToPos( self:GetEnemy(), combattbl )
 end
 
+-- Wander around until we find someone to jump
 function ENT:FindTarget()
 
-    self:SwitchToLethalWeapon()
+    if !self:HasLethalWeapon() then self:SwitchToLethalWeapon() end
 
     self:Hook( "Tick", "CombatTick", function()
         if LambdaIsValid( self:GetEnemy() ) or self:GetState() != "FindTarget" then return "end" end
