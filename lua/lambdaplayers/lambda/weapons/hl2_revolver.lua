@@ -5,6 +5,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         origin = "Half Life: 2",
         prettyname = ".357 Revolver",
         holdtype = "revolver",
+        killicon = "weapon_357",
         bonemerge = true,
         keepdistance = 550,
         attackrange = 3500,
@@ -21,7 +22,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         reloadtime = 3.66,
         --reloadanim = ACT_HL2MP_GESTURE_RELOAD_REVOLVER,
-        reloadanimationspeed = 1,
+        reloadanimspeed = 1,
         reloadsounds = { 
             { 0.933, "Weapon_357.OpenLoader" }, 
             { 1.3, "Weapon_357.RemoveLoader" }, 

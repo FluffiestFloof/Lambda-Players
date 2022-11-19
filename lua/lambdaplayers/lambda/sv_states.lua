@@ -52,7 +52,7 @@ function ENT:FindTarget()
 
     self:Hook( "Tick", "CombatTick", function()
         if LambdaIsValid( self:GetEnemy() ) or self:GetState() != "FindTarget" then return "end" end
-        local find = self:FindInSphere( nil, 1500, function( ent ) return self:CanTarget( ent ) end )
+        local find = self:FindInSphere( nil, 1500, function( ent ) return self:CanTarget( ent ) and self:CanSee( ent ) end )
 
         for k, v in RandomPairs( find ) do
             self:AttackTarget( v )
@@ -68,17 +68,13 @@ end
 
 local laughdir = GetConVar( "lambdaplayers_voice_laughdir" )
 function ENT:Laughing()
-
     self:PlaySoundFile( laughdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "laugh" ), true )
-
-    self:PlaySequenceAndWait( "taunt_laugh" )
-
+    coroutine.wait( self:GetLayerDuration( self:AddGesture( ACT_GMOD_TAUNT_LAUGH ) ) )
     self:SetState( "Idle" )
 end
 
-
-local acts = { "taunt_dance", "taunt_robot", "taunt_muscle", "taunt_cheer" }
+local acts = { ACT_GMOD_TAUNT_DANCE, ACT_GMOD_TAUNT_ROBOT, ACT_GMOD_TAUNT_MUSCLE, ACT_GMOD_TAUNT_CHEER }
 function ENT:UsingAct()
-    self:PlaySequenceAndWait( acts[ random( #acts ) ] )
+    coroutine.wait( self:GetLayerDuration( self:AddGesture( acts[ random( #acts) ] ) ) )
     self:SetState( "Idle" )
 end

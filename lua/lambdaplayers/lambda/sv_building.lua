@@ -7,6 +7,8 @@ local table_remove = table.remove
 local tobool = tobool
 local Angle = Angle
 local table_Merge = table.Merge
+local table_RemoveByValue = table.RemoveByValue
+local table_GetKeys = table.GetKeys
 local caneditworld = GetConVar( "lambdaplayers_building_caneditworld" )
 local caneditnonworld = GetConVar( "lambdaplayers_building_caneditnonworld" )
 
@@ -82,5 +84,68 @@ function ENT:SpawnProp()
 
     return prop
 end
+
+local NPCList
+
+local function GetRandomNPCClassname()
+    NPCList = NPCList or list.Get( "NPC" )
+    local keys = table_GetKeys( NPCList )
+    table_RemoveByValue( keys, "npc_lambdaplayer" ) -- We don't want them spawning themselves
+    return keys[ random( #keys ) ]
+end
+
+
+function ENT:SpawnNPC()
+    if !self:IsUnderLimit( "NPC" ) then return end
+
+    self:EmitSound( "ui/buttonclickrelease.wav", 60 )
+
+    local trace = self:GetEyeTrace()
+    local class = GetRandomNPCClassname()
+
+    -- Internal function located at autorun_includes/server/building_npccreation.lua
+    local NPC = LambdaInternalSpawnNPC( self, trace.HitPos, trace.HitNormal, class, false )
+    
+    if !IsValid( NPC ) then return end
+
+    NPC.LambdaOwner = self
+    NPC.IsLambdaSpawned = true
+
+    self:DebugPrint( "spawned a NPC ", class )
+
+    self:ContributeEntToLimit( NPC, "NPC" )
+    table_insert( self.l_SpawnedEntities, 1, NPC )
+
+    return NPC
+end
+
+local entlist
+
+function ENT:SpawnEntity()
+    if !self:IsUnderLimit( "Entity" ) then return end
+
+    self:EmitSound( "ui/buttonclickrelease.wav", 60 )
+
+    entlist = entlist or table_GetKeys( list.Get( "SpawnableEntities" ) )
+    local trace = self:GetEyeTrace()
+    local class = entlist[ random( #entlist ) ]
+
+    -- function located at autorun_includes/server/building_entitycreation.lua
+    local entity = LambdaSpawn_SENT( self, class, trace )
+    
+    if !IsValid( entity ) then return end
+
+    entity.LambdaOwner = self
+    entity.IsLambdaSpawned = true
+
+    self:DebugPrint( "spawned a Entity ", class )
+
+    self:ContributeEntToLimit( entity, "Entity" )
+    table_insert( self.l_SpawnedEntities, 1, entity )
+
+    return entity
+end
+
+
 
 ------

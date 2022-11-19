@@ -11,6 +11,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         origin = "Half Life: 2",
         prettyname = "AR2",
         holdtype = "ar2",
+        killicon = "weapon_ar2",
         bonemerge = true,
         keepdistance = 400,
         attackrange = 2500,
@@ -27,7 +28,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         reloadtime = 1.5,
         reloadanim = ACT_HL2MP_GESTURE_RELOAD_AR2,
-        reloadanimationspeed = 1,
+        reloadanimspeed = 1,
         reloadsounds = { 
             { 0, "Weapon_AR2.Reload_Rotate" },
             { 0.63, "Weapon_AR2.Reload_Push" }

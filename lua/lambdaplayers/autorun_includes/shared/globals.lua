@@ -2,6 +2,7 @@ local table_insert = table.insert
 local pairs = pairs
 local string_find = string.find
 local tostring = tostring
+local iconColor = Color(255, 80, 0, 255)
 
 _LAMBDAPLAYERSWEAPONS = {}
 
@@ -23,7 +24,20 @@ _LAMBDAWEAPONALLOWCONVARS = {}
 for k, v in pairs( _LAMBDAPLAYERSWEAPONS ) do
     local convar = CreateLambdaConvar( "lambdaplayers_weapons_allow" .. k, 1, true, false, false, "Allows the Lambda Players to equip " .. v.prettyname, 0, 1 )
 	_LAMBDAWEAPONALLOWCONVARS[ k ] = convar
-	if CLIENT then _LAMBDAPLAYERSWEAPONORIGINS[ v.origin ] = v.origin end
+	if CLIENT then 
+        _LAMBDAPLAYERSWEAPONORIGINS[ v.origin ] = v.origin 
+
+        if v.killicon then
+            local iskilliconfilepath = string_find( v.killicon, "/" )
+
+            if iskilliconfilepath then
+                killicon.Add( "lambdaplayers_weaponkillicons_" .. k, v.killicon, iconColor )
+            else
+                killicon.AddAlias( "lambdaplayers_weaponkillicons_" .. k, v.killicon )
+            end
+        end
+
+    end
 end
 
 _LAMBDAWEAPONCLASSANDPRINTS = {}
@@ -32,7 +46,7 @@ for k, v in pairs( _LAMBDAPLAYERSWEAPONS ) do
 	_LAMBDAWEAPONCLASSANDPRINTS[ v.prettyname ] = k
 end
 
-CreateLambdaConvar( "lambdaplayers_lambda_spawnweapon", "physgun", true, true, true, "The weapon lambda players will spawn with only if the specified weapon is allowed", 0, 1, { type = "Combo", options = _LAMBDAWEAPONCLASSANDPRINTS, name = "Spawn Weapon", category = "Lambda Player Settings" } )
+CreateLambdaConvar( "lambdaplayers_lambda_spawnweapon", "physgun", true, true, true, "The weapon Lambda Players will spawn with only if the specified weapon is allowed", 0, 1, { type = "Combo", options = _LAMBDAWEAPONCLASSANDPRINTS, name = "Spawn Weapon", category = "Lambda Player Settings" } )
 
 -- One part of the duplicator support
 -- Register the Lambdas so the duplicator knows how to handle these guys
@@ -189,4 +203,28 @@ function LambdaHijackGmodEntity( ent, lambda )
     
     end
 
+end
+
+local ents_GetAll = ents.GetAll
+local ipairs = ipairs
+local IsValid = IsValid
+function GetLambdaPlayers()
+    local lambdas = {}
+    for k, v in ipairs( ents_GetAll() ) do
+        if IsValid( v ) and v.IsLambdaPlayer then lambdas[ #lambdas + 1 ] = v end
+    end
+    return lambdas
+end
+
+
+function LambdaCreateThread( func )
+    local thread = coroutine.create( func ) 
+    hook.Add( "Think", "lambdaplayersThread_" .. tostring( func ), function() 
+        if coroutine.status( thread ) != "dead" then
+            local ok, msg = coroutine.resume( thread )
+            if !ok then ErrorNoHaltWithStack( msg ) end
+        else
+            hook.Remove( "Think", "lambdaplayersThread_" .. tostring( func ) )
+        end
+    end )
 end

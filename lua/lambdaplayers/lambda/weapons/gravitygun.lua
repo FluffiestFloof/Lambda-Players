@@ -4,7 +4,7 @@ local IsValid = IsValid
 local util_Effect = util.Effect
 local tracetbl = {}
 
--- Effects idle gravity gun
+-- Effects for gravity gun idle
 local ggunGlowSprite = Material("sprites/glow04_noz")
 
 -- Effects for pulling and grabbing active
@@ -22,6 +22,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         model = "models/weapons/w_physics.mdl",
         origin = "Garry's Mod",
         prettyname = "Gravity Gun",
+        killicon = "weapon_physcannon", -- No idea if this is needed but why not
         bonemerge = true,
         holdtype = "physgun",
 
@@ -56,7 +57,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
                 lambda:LookTo( prop, 3 )
 
-                lambda:SimpleTimer( 1, function() -- To let the lambda aim properly
+                lambda:SimpleTimer( 1, function() -- To let the Lambda aim properly
                     if !IsValid( prop ) or !IsValid( wepent ) then return end
                     lambda:UseWeapon( prop )
                 end)

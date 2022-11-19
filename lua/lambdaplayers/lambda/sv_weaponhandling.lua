@@ -5,6 +5,9 @@ local RandomPairs = RandomPairs
 local ipairs = ipairs
 local Effect = util.Effect
 local CurTime = CurTime
+local string_find = string.find
+local origin = Vector()
+local angle_zero = Angle()
 
 -- Switch to a weapon with the provided name.
 -- See the lambda/weapons folder for weapons. Check out the holster.lua file to see the current valid weapon settings
@@ -29,9 +32,23 @@ function ENT:SwitchWeapon( weaponname, forceswitch )
     self.l_CombatKeepDistance = weapondata.keepdistance
     self.l_CombatAttackRange = weapondata.attackrange
     self.l_OnDamagefunction = weapondata.OnDamage
+    self.l_WeaponNoDraw = weapondata.nodraw
     self.l_CombatSpeedAdd = weapondata.addspeed or 0
     self.l_Clip = weapondata.clip or 0
     self.l_MaxClip = weapondata.clip or 0
+
+    local killicon_ = weapondata.killicon
+    if killicon_ then
+        local ispath = string_find( killicon_, "/" )
+        if ispath then
+            wepent.l_killiconname = "lambdaplayers_weaponkillicons_" .. weaponname
+        else
+            wepent.l_killiconname = killicon_
+        end
+    else
+        wepent.l_killiconname = nil
+    end
+
     
     self:ClientSideNoDraw( self.WeaponEnt, weapondata.nodraw )
     self:SetHasCustomDrawFunction( isfunction( weapondata.Draw ) )
@@ -39,8 +56,12 @@ function ENT:SwitchWeapon( weaponname, forceswitch )
     self.WeaponEnt:SetNoDraw( weapondata.nodraw )
     self.WeaponEnt:DrawShadow( !weapondata.nodraw )
 
-    wepent:SetModel( weapondata.model )
+    self.WeaponEnt:SetLocalPos( weapondata.offpos or origin )
+    self.WeaponEnt:SetLocalAngles( weapondata.offang or angle_zero )
 
+    wepent:SetModel( weapondata.model )
+    
+    
     if isfunction( weapondata.OnEquip ) then weapondata.OnEquip( self, wepent ) end
 
 end
@@ -72,7 +93,7 @@ local function DefaultRangedWeaponFire( self, wepent, target, weapondata, disabl
     
     if !disabletbl.sound then wepent:EmitSound( TranslateRandomization( weapondata.attacksnd ), 70, 100, 1, CHAN_WEAPON ) end
     
-    if !disabletbl.muzzleflash then self:HandleMuzzleFlash( weapondata.muzzleflash, weapondata.muzzleflashpos, weapondata.muzzleflashang ) end
+    if !disabletbl.muzzleflash then self:HandleMuzzleFlash( weapondata.muzzleflash, weapondata.muzzleoffpos, weapondata.muzzleoffang ) end
     if !disabletbl.shell then self:HandleShellEject( weapondata.shelleject, weapondata.shelloffpos, weapondata.shelloffang ) end
 
     if !disabletbl.anim then
@@ -160,7 +181,7 @@ function ENT:ReloadWeapon()
     local wep = self:GetWeaponENT()
     local time = weapondata.reloadtime or 1
     local anim = weapondata.reloadanim
-    local animspeed = weapondata.reloadanimationspeed or 1
+    local animspeed = weapondata.reloadanimspeed or 1
     local snds = weapondata.reloadsounds
 
     if snds and #snds > 0 then
@@ -219,10 +240,9 @@ function ENT:HandleShellEject( name, offpos, offang )
     Effect( name, effect, true )
 end
 
--- If the lambda's weapon data has nodraw enabled
+-- If the Lambda's weapon data has nodraw enabled
 function ENT:IsWeaponMarkedNodraw()
-    local weapondata = _LAMBDAPLAYERSWEAPONS[ self.l_Weapon ]
-    return weapondata.nodraw
+    return self.l_WeaponNoDraw
 end
 
 -- If we can equip the specified weapon name
