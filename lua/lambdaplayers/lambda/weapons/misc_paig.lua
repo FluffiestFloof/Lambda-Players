@@ -24,11 +24,15 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         OnEquip = function( lambda, wepent )
             if IsMounted( "tf" ) then wepent.tf2mounted = true end -- If user doesn't have TF2, don't do anything special with PAIG
-
+            print("equip")
             if wepent.tf2mounted and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+                wepent.PAIG_SBLoop = CreateSound( wepent, "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
+                wepent:CallOnRemove("lambda_paig_sb_stopsound" ..wepent:EntIndex(), function()
+                    if wepent.PAIG_SBLoop then wepent.PAIG_SBLoop:Stop() wepent.PAIG_SBLoop = nil end
+                end)
                 lambda:SimpleTimer( 0.3, function()
-                    lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                    if wepent.PAIG_SBLoop then wepent.PAIG_SBLoop:Play() end
                 end)
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
@@ -43,9 +47,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         -- Stop sound on death
         OnDamage = function( lambda, wepent, dmginfo )
-            if IsValid( lambda ) and lambda:GetIsDead() then
-                lambda:ManipulateBoneAngles( lambda:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) )
-                lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+            if IsValid( lambda ) and dmginfo:GetDamage() > lambda:Health() then
+                lambda:ManipulateBoneAngles( lambda:LookupBone("ValveBiped.Bip01_Spine"), angle_zero )
+                if wepent.PAIG_SBLoop then wepent.PAIG_SBLoop:Stop() end
             end
         end,
 
@@ -57,7 +61,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
                 
                 wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
-                self:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
+                if wepent.PAIG_SBLoop then wepent.PAIG_SBLoop:Stop() end
 
                 -- Simulate the Sentry Buster spin. Might cause issues?
                 self:Hook( "Think", "PAIGSpin", function( )
