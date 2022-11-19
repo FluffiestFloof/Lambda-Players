@@ -97,7 +97,7 @@ net.Receive( "lambdaplayers_createclientsidedroppedweapon", function()
 
 end )
 
-
+local Material = Material
 local voiceicon = Material( "voice/icntlk_pl" )
 
 
@@ -209,7 +209,7 @@ local function PlaySoundFile( ent, soundname, index, shouldstoponremove, is3d )
             local tickent -- This variable is used so we don't redefine ent and can allow the sound to return to the Lambda when they respawn
 
             -- This has proved to be a bit of a challenge.
-            -- There were issues with the sounds not going back the lambda player when they respawn and there were issues when the ragdoll gets removed.
+            -- There were issues with the sounds not going back the Lambda player when they respawn and there were issues when the ragdoll gets removed.
             -- Right now this code seems to work just as I think I want it to. Unsure if it could be optimized better but to me it looks as good as it is gonna get
 
             hook.Add( "Tick", "lambdaplayersvoicetick" .. index, function()
@@ -316,4 +316,14 @@ net.Receive( "lambdaplayers_chatadd", function()
     args = JSONToTable( args )
 
     chat_AddText( unpack( args ) )
+end )
+
+net.Receive( "lambdaplayers_addtokillfeed", function() 
+    local attackername = net.ReadString()
+    local attackerteam = net.ReadInt( 8 )
+    local victimname = net.ReadString()
+    local victimteam = net.ReadInt( 8 )
+    local inflictorname = net.ReadString()
+
+    GAMEMODE:AddDeathNotice( attackername, attackerteam, inflictorname, victimname, victimteam )
 end )

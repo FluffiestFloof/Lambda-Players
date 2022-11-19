@@ -14,10 +14,11 @@ local ceil = math.ceil
 local deathdir = GetConVar( "lambdaplayers_voice_deathdir" )
 local killdir = GetConVar( "lambdaplayers_voice_killdir" )
 local debugvar = GetConVar( "lambdaplayers_debug" )
+local callnpchook = GetConVar( "lambdaplayers_lambda_callonnpckilledhook" )
 
 if SERVER then
 
-    -- Due to the issues of lambda players not taking damage when they die internally, we have no choice but to recreate them to get around this.
+    -- Due to the issues of Lambda Players not taking damage when they die internally, we have no choice but to recreate them to get around this.
     -- If there is a fix for the damage handling failing to prevent them from actually getting below 0 please make it known so it can be fixed ASAP.
     function ENT:OnKilled( info )
         if debugvar:GetBool() then ErrorNoHaltWithStack( "WARNING! ", self:GetLambdaName(), " was killed on a engine level! The entity will be recreated!" ) end
@@ -61,9 +62,11 @@ if SERVER then
         self.WeaponEnt:SetNoDraw( true )
         self.WeaponEnt:DrawShadow( false )
 
-        self:SwitchWeapon( "none", true )
-
         self:GetPhysicsObject():EnableCollisions( false )
+
+        LambdaKillFeedAdd( self, info:GetAttacker(), info:GetInflictor() )
+        if callnpchook:GetBool() then hook.Run( "OnNPCKilled", self, info:GetAttacker(), info:GetInflictor() ) end
+        self:SetDeaths( self:GetDeaths() + 1 )
 
         self:RemoveTimers()
         self:TerminateNonIgnoredDeadTimers()
@@ -133,8 +136,11 @@ if SERVER then
         if attacker == self then
             local killlines = LambdaVoiceLinesTable.kill
             self:DebugPrint( "killed ", victim )
+            self:SetFrags( self:GetFrags() + 1 )
 
             if random( 1, 100 ) <= self:GetVoiceChance() then self:PlaySoundFile( killdir:GetString() == "randomengine" and self:GetRandomSound() or self:GetVoiceLine( "kill" ) ) end 
+
+            if !victim.IsLambdaPlayer then LambdaKillFeedAdd( victim, info:GetAttacker(), info:GetInflictor() ) end
 
         else -- Someone else killed the victim
 
@@ -220,10 +226,14 @@ if SERVER then
     
     function ENT:OnLandOnGround( ent )
         local damage = 0
+        local falldistance = abs( self.l_FallVelocity )
+        local fatalfallspeed = 1200 -- sqrt( 2 * gravity * 60 * 12 ) but right now this will do
+        local maxsafefallspeed = 650 -- sqrt( 2 * gravity * 20 * 12 )
+        local damageforfall = 100 / (fatalfallspeed - maxsafefallspeed) -- Simulate the same fall damage as players
         
         if realisticfalldamage:GetBool() then
-            damage = max( 0, ceil( 0.3218 * abs( self.l_FallVelocity ) - 153.75 ) )
-        elseif abs( self.l_FallVelocity ) > 500 then
+            damage = (falldistance - maxsafefallspeed) * damageforfall -- If the fall isn't long enough it gives us a negative number and that's fine, we check for higher than 0 anyway. 
+        elseif falldistance > maxsafefallspeed then
             damage = 10
         end
 
@@ -263,7 +273,7 @@ function ENT:InitializeMiniHooks()
     if SERVER then
 
         -- Hoookay so interesting stuff here. When a nextbot actually dies by reaching 0 or below hp, no matter how high you set their health after the fact, they will no longer take damage.
-        -- To get around that we basically predict if the lambda is gonna die and completely block the damage so we don't actually die. This of course is exclusive to Respawning
+        -- To get around that we basically predict if the Lambda is gonna die and completely block the damage so we don't actually die. This of course is exclusive to Respawning
         self:Hook( "EntityTakeDamage", "DamageHandling", function( target, info )
             if target != self then return end
 
@@ -301,7 +311,7 @@ function ENT:InitializeMiniHooks()
     elseif CLIENT then
 
         self:Hook( "PreDrawEffects", "CustomWeaponRenderEffects", function()
-            if self:GetIsDead() or RealTime() > self.l_lastdraw then return end
+            if self:GetIsDead() or !self:IsBeingDrawn() then return end
 
             if self:GetHasCustomDrawFunction() then
                 local func = _LAMBDAPLAYERSWEAPONS[ self:GetWeaponName() ].Draw

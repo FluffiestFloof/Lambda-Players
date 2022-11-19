@@ -1,5 +1,6 @@
 local table_insert = table.insert
 local rand = math.Rand
+local VectorRand = VectorRand
 local coroutine = coroutine
 
 LambdaBuildingFunctions = {}
@@ -27,6 +28,35 @@ local function SpawnAProp( self )
     return true -- Just like for toolguns, we return true to let the for loop know we completed what we wanted to do and it can break
 end
 AddBuildFunctionToLambdaBuildingFunctions( "prop", "Allow Prop Spawning", "If Lambda Players are allowed to spawn props", SpawnAProp )
+
+local function SpawnNPC( self )
+    if !self:IsUnderLimit( "NPC" ) then return end
+    
+    self.Face = self:WorldSpaceCenter() + VectorRand( -200, 200 )
+    coroutine.wait( rand( 0.2, 1 ) )
+    local npc = self:SpawnNPC()
+    if !IsValid( npc ) then return end
+    coroutine.wait( rand( 0.2, 1 ) )
+    self.Face = nil
+
+    return true
+end
+AddBuildFunctionToLambdaBuildingFunctions( "npc", "Allow NPC Spawning", "If Lambda Players are allowed to spawn NPCs", SpawnNPC )
+
+
+local function SpawnEntity( self )
+    if !self:IsUnderLimit( "Entity" ) then return end
+    
+    self.Face = self:WorldSpaceCenter() + VectorRand( -200, 200 )
+    coroutine.wait( rand( 0.2, 1 ) )
+    local entity = self:SpawnEntity()
+    if !IsValid( entity ) then return end
+    coroutine.wait( rand( 0.2, 1 ) )
+    self.Face = nil
+
+    return true
+end
+AddBuildFunctionToLambdaBuildingFunctions( "entity", "Allow Entity Spawning", "If Lambda Players are allowed to spawn Entities", SpawnEntity )
 
 
 -- Called when all default building functions above have been loaded.

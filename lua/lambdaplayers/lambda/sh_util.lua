@@ -42,7 +42,7 @@ function ENT:DebugPrint( ... )
     print( self:GetLambdaName() .. " EntIndex = ( " .. self:EntIndex() .. " )" .. ": ", ... )
 end
 
--- Creates a hook that will remove itself if it runs while the lambda is invalid or if the provided function returns false
+-- Creates a hook that will remove itself if it runs while the Lambda is invalid or if the provided function returns false
 -- preserve makes the hook not remove itself when the Entity is considered "dead" by self:GetIsDead(). Mainly used by Respawning
 -- cooldown arg is meant to be used with Tick and Think hooks
 function ENT:Hook( hookname, uniquename, func, preserve, cooldown )
@@ -217,24 +217,28 @@ function ENT:ExportLambdaInfo()
         plycolor = self:GetPlyColor(),
         physcolor = self:GetPhysColor(),
 
-        -- Chances
-        build = self:GetBuildChance(),
-        tool = self:GetToolChance(),
-        combat = self:GetCombatChance(),
-        voice = self:GetVoiceChance(),
-        --
-
         voicepitch = self:GetVoicePitch(),
-        voiceprofile = self.l_VoiceProfile,
+        voice = self:GetVoiceChance(),
+        voiceprofile = self:GetNW2String( "lambda_vp", self.l_VoiceProfile ),
+        pingrange = self:GetAbsPing(),
 
         -- Non personal data --
         respawn = self:GetRespawn(),
-        spawnwep = self.l_SpawnWeapon,
+        spawnwep = self:GetNW2String( "lambda_spawnweapon", self.l_SpawnWeapon ),
+        frags = self:GetFrags(),
+        deaths = self:GetDeaths(),
 
-        -- NW Vars --
+        externalvars = table_Copy( self.l_ExternalVars ),
+
+--[[         -- NW Vars --
         nwvars = self:GetNWVarTable(),
-        nw2vars = self:GetNW2VarTable(),
+        nw2vars = self:GetNW2VarTable(), ]]
     }
+
+    info.personality = {}
+    for k, v in ipairs( self.l_Personality ) do
+        info.personality[ v[ 1 ] ] = self:GetNW2Int( "lambda_chance_" .. v[ 1 ], 0 )
+    end
 
     return info
 end
@@ -262,26 +266,32 @@ if SERVER then
             self:SetPhysColor( info.physcolor or self:GetPhysColor() )
             self.WeaponEnt:SetNW2Vector( "lambda_weaponcolor", ( info.physcolor or self:GetPhysColor() ) )
 
-            self:SetBuildChance( info.build or self:GetBuildChance() )
-            self:SetCombatChance( info.combat or self:GetCombatChance() )
+            if info.personality then
+                self:BuildPersonalityTable( info.personality )
+            end
+
             self:SetVoiceChance( info.voice or self:GetVoiceChance() )
-            self:SetToolChance( info.tool or self:GetToolChance() )
-            self.l_Personality = {
-                { "Build", info.build or self:GetBuildChance() },
-                { "Tool", info.tool or self:GetToolChance() },
-                { "Combat", info.combat or self:GetCombatChance() },
-            }
             SortTable( self.l_Personality, function( a, b ) return a[ 2 ] > b[ 2 ] end )
 
+            self:SetAbsPing( info.pingrange or self:GetAbsPing() )
             self:SetVoicePitch( info.voicepitch or self:GetVoicePitch() )
             self.l_VoiceProfile = info.voiceprofile or self.l_VoiceProfile
-
+            self:SetNW2String( "lambda_vp", self.l_VoiceProfile )
             -- Non Personal Data --
-
+            local spawnwep = info.spawnwep or self.l_SpawnWeapon
             self:SetRespawn( info.respawn or self:GetRespawn() )
-            self:SwitchWeapon( info.spawnwep or self.l_Weapon )
+            self:SwitchWeapon( spawnwep )
+            
+            self:SetNW2String( "lambda_spawnweapon", spawnwep )
 
-            -- NW Vars --
+            self:SetFrags( info.frags or self:GetFrags() )
+            self:SetDeaths( info.deaths or self:GetDeaths() )
+
+            for k, v in pairs( info.externalvars ) do
+                self.l_ExternalVars[ k ] = v
+            end
+
+--[[             -- NW Vars --
             local nw = info.nwvars
             local nw2 = info.nw2vars
             if istable( nw ) then
@@ -293,9 +303,19 @@ if SERVER then
                 for k, vartable in pairs( nw2 ) do
                     self:SetNW2Var( k, vartable.value )
                 end
-            end
+            end ]]
             
         end, true )
+    end
+
+    -- Set a value that will be exported with :ExportLambdaInfo()
+    function ENT:SetExternalVar( key, val )
+        self.l_ExternalVars[ key ] = val
+    end
+
+    -- Gets a value set by :SetExternalVar( key, val )
+    function ENT:GetExternalVar( key )
+        return self.l_ExternalVars[ key ]
     end
     
     -- If the we can target the ent
@@ -355,7 +375,7 @@ if SERVER then
         return name
     end
 
-    -- Makes the lambda face the position or a entity if provided
+    -- Makes the Lambda face the position or a entity if provided
     function ENT:LookTo( pos, time )
         self.Face = pos
         self.l_Faceend = time and CurTime() + time or nil
@@ -412,7 +432,7 @@ if SERVER then
         return Trace( tracetable )
     end
 
-    -- Prevents the lambda player from switching weapons when this is true
+    -- Prevents the Lambda Player from switching weapons when this is true
     function ENT:PreventWeaponSwitch( bool )
         self.l_NoWeaponSwitch = bool
     end
@@ -428,7 +448,7 @@ if SERVER then
         return result.Entity == ent
     end
 
-    -- Respawns the lambda only if they have self:SetRespawn( true ) otherwise they are removed from run time
+    -- Respawns the Lambda only if they have self:SetRespawn( true ) otherwise they are removed from run time
     function ENT:LambdaRespawn()
         self:DebugPrint( "Respawned" )
         self:SetIsDead( false )
@@ -562,7 +582,7 @@ if SERVER then
     -- Makes the entity no longer draw on the client if bool is set to true.
     -- Making a entity nodraw server side seemed to have issues in multiplayer.
 
-    -- As of 11/2/2022, it seems we need the server nodraw, client nodraw, and usage of Draw functions to make the lambda players to not draw. Kinda cringe but alright
+    -- As of 11/2/2022, it seems we need the server nodraw, client nodraw, and usage of Draw functions to make the Lambda Players to not draw. Kinda cringe but alright
 
     function ENT:ClientSideNoDraw( ent, bool )
         net.Start( "lambdaplayers_setnodraw" )
@@ -590,6 +610,9 @@ if SERVER then
 
 elseif CLIENT then
 
+    function ENT:IsBeingDrawn()
+        return RealTime() < self.l_lastdraw
+    end
 
 
 end

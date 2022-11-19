@@ -47,6 +47,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Physics Gun",
         bonemerge = true,
         holdtype = "physgun",
+        killicon = "weapon_physcannon",
 
         OnEquip = function( lambda, wepent )
             wepent:SetSkin( 1 )
@@ -103,7 +104,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 lambda:Thread( function()
 
                     while true do 
-                        if lambda:GetState() == "Idle" and !physgunactive then
+                        if lambda:GetState() == "Idle" and !physgunactive and random( 1, 3 ) == 1 then
                             local possibleents = lambda:FindInSphere( nil, 1500, function( ent ) return !ignoreentclasses[ ent:GetClass() ] and lambda:HasVPhysics( ent ) and lambda:HasPermissionToEdit( ent ) and lambda:CanSee( ent ) end )
                             local ent = possibleents[ random( #possibleents ) ]
 
