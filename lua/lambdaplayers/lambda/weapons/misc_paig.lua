@@ -33,6 +33,8 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
             end
+
+
         end,
 
         OnUnequip = function( lambda, wepent )
