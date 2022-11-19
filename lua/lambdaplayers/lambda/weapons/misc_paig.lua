@@ -24,7 +24,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
         OnEquip = function( lambda, wepent )
             if IsMounted( "tf" ) then wepent.tf2mounted = true end -- If user doesn't have TF2, don't do anything special with PAIG
-            print("equip")
+            
             if wepent.tf2mounted and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 wepent.PAIG_SBLoop = CreateSound( wepent, "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
@@ -37,7 +37,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             else
                 wepent:EmitSound( "weapons/pinpull.wav", 70 )
             end
-
 
         end,
 
