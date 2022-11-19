@@ -7,7 +7,6 @@ local ScreenShake = util.ScreenShake
 local BlastDamage = util.BlastDamage
 
 local convar = CreateLambdaConvar( "lambdaplayers_weapons_paigsentrybuster", 0, true, false, true, "If Lambda that spawn with the PAIG should act like the Sentry Buster. TF2 REQUIRED!", 0, 1, { type = "Bool", name = "PAIG - Enable Sentry Buster Mode", category = "Weapon Utilities" } )
-local tf2 = false
 
 table.Merge( _LAMBDAPLAYERSWEAPONS, {
 
@@ -16,6 +15,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         origin = "Misc",
         prettyname = "Punch Activated Impact Grenade",
         holdtype = "grenade",
+        killicon = "npc_grenade_frag",
         ismelee = true,
         bonemerge = true,
         keepdistance = 5,
@@ -23,9 +23,9 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         addspeed = 50,
 
         OnEquip = function( lambda, wepent )
-            if IsMounted('tf') then tf2=true end -- If user doesn't have TF2, don't do anything special with PAIG
+            if IsMounted('tf') then wepent.tf2mounted = true end -- If user doesn't have TF2, don't do anything special with PAIG
 
-            if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+            if wepent.tf2mounted and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_intro.wav" )
                 lambda:SimpleTimer( 0.3, function()
                     lambda:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" )
@@ -36,7 +36,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         end,
 
         OnUnequip = function( lambda, wepent )
-            if tf2 then lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" ) end
+            if wepent.tf2mounted then lambda:StopSound( "mvm/sentrybuster/mvm_sentrybuster_loop.wav" ) end
         end,
 
         -- Stop sound on death
@@ -51,7 +51,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             self.l_WeaponUseCooldown = CurTime() + 4
             local dur = 0.3
 
-            if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+            if wepent.tf2mounted and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                 dur = SoundDuration("mvm/sentrybuster/mvm_sentrybuster_spin.wav")
                 
                 wepent:EmitSound( "mvm/sentrybuster/mvm_sentrybuster_spin.wav" )
@@ -78,7 +78,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
             end]]
             
             self:SimpleTimer( dur, function()
-                if !IsValid( self ) or !IsValid( wepent ) then if tf2 then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) end return end
+                if !IsValid( self ) or !IsValid( wepent ) then if wepent.tf2mounted then self:ManipulateBoneAngles( self:LookupBone("ValveBiped.Bip01_Spine"), Angle( 0, 0, 0 ) ) end return end
                 
                 local effect = EffectData()
                 effect:SetOrigin( wepent:GetPos() )
@@ -86,7 +86,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
                 
                 BlastDamage( self, self, wepent:GetPos(), 400, 1000 )
 
-                if tf2 and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
+                if wepent.tf2mounted and GetConVar( "lambdaplayers_weapons_paigsentrybuster" ):GetBool() then
                     ScreenShake( wepent:GetPos(), 25, 5, 3, 1000 )
                         
                     ParticleEffect( "fluidSmokeExpl_ring_mvm", wepent:GetPos() + Vector( 50, 50, 25 ), wepent:GetAngles() )
