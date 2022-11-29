@@ -30,10 +30,10 @@ end
 local function OpenProfilePanel( ply )
     if !IsValid( ply ) then return end
 
-    local frame = LAMBDAPANELS:CreateFrame( "Profile Editor", 700, 350 )
+    local frame = LAMBDAPANELS:CreateFrame( "#lambda.profilepanel.title", 700, 350 )
 
     
-    LAMBDAPANELS:CreateURLLabel( "Click here to learn on how to use this panel!", "https://github.com/IcyStarFrost/Lambda-Players/wiki/Adding-Custom-Content#lambda-profiles", frame, TOP )
+    LAMBDAPANELS:CreateURLLabel( "#lambda.profilepanel.helpdesc", "https://github.com/IcyStarFrost/Lambda-Players/wiki/Adding-Custom-Content#lambda-profiles", frame, TOP )
 
     -- Profile Listing and buttons --
     local rightpanel = LAMBDAPANELS:CreateBasicPanel( frame )
@@ -43,7 +43,7 @@ local function OpenProfilePanel( ply )
 
     local profilelist = vgui.Create( "DListView", rightpanel )
     profilelist:Dock( FILL )
-    profilelist:AddColumn( "Profiles", 1 )
+    profilelist:AddColumn( "#lambda.profilepanel.profiles", 1 )
 
     local CompileSettings
     local ImportProfile
@@ -74,7 +74,7 @@ local function OpenProfilePanel( ply )
             if info.name == profilename then v:SetSortValue( 1, newinfo ) return end
         end
 
-        local line =  profilelist:AddLine( newinfo.name .. ( islocal and " | Local" or " | SERVER" ) )
+        local line =  profilelist:AddLine( newinfo.name .. ( islocal and " | "..language.GetPhrase( "lambda.profilepanel.local" ) or " | "..language.GetPhrase( "lambda.profilepanel.server" ) ) )
         line.l_isprofilelocal = islocal
         line:SetSortValue( 1, newinfo )
     end
@@ -90,18 +90,18 @@ local function OpenProfilePanel( ply )
         conmenu:SetPos( x, y + 10)
         local info = line:GetSortValue( 1 )
 
-        conmenu:AddOption( "Cancel", function() end )
-        conmenu:AddOption( "Delete " .. info.name .. "?", function()
+        conmenu:AddOption( "#lambda.profilepanel.cancel", function() end )
+        conmenu:AddOption( language.GetPhrase( "lambda.profilepanel.delete" ) .. info.name .. "?", function()
             
             if line.l_isprofilelocal then
                 LAMBDAFS:RemoveVarFromKVFile( "lambdaplayers/profiles.json", info.name, "json" )
                 surface.PlaySound( "buttons/button15.wav" )
-                chat.AddText( "Deleted " .. info.name .. " from your Profiles")
+                chat.AddText( language.GetPhrase( "lambda.profilepanel.deleted" ) .. info.name .. language.GetPhrase( "lambda.profilepanel.deletedlocal" ) )
                 profilelist:RemoveLine( id )
             else
                 LAMBDAPANELS:RemoveVarFromKVFile( "lambdaplayers/profiles.json", info.name, "json" ) 
                 surface.PlaySound( "buttons/button15.wav" )
-                chat.AddText( "Deleted " .. info.name .. " from the Server's Profiles")
+                chat.AddText( language.GetPhrase( "lambda.profilepanel.deleted" ) .. info.name .. language.GetPhrase( "lambda.profilepanel.deletedserver") )
                 profilelist:RemoveLine( id )
             end
         end )
