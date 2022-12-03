@@ -241,7 +241,7 @@ function ENT:UseWeapon( target )
         local callback = weapondata.callback
         local result
 
-        if self:WaterLevel() > 2 and ( weapondata.islethal and !iswaterproof and !ismelee ) then self:SwitchToLethalUnderwaterWeapon() end
+        if self:WaterLevel() > 2 and ( weapondata.islethal and !iswaterproof and !ismelee ) then self:SwitchToLethalUnderwaterWeapon() return end
         
         if callback then result = callback( self, wepent, target ) end
         
