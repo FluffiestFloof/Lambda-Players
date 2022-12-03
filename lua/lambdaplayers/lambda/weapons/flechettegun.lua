@@ -16,6 +16,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Flechette Gun",
         holdtype = "smg",
         bonemerge = true,
+        waterproof = true,
         keepdistance = 400,
         attackrange = 1500,
 

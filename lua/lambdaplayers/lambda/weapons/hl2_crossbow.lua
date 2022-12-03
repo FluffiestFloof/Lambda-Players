@@ -9,6 +9,7 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         prettyname = "Crossbow",
         holdtype = "crossbow",
         killicon = "crossbow_bolt",
+        waterproof = true,
         bonemerge = true,
         keepdistance = 400,
         attackrange = 3500,

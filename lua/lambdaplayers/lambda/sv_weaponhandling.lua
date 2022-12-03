@@ -163,6 +163,7 @@ local bullettbl = {}
 -- I like this way more than before 
 local function DefaultRangedWeaponFire( self, wepent, target, weapondata, disabletbl )
     if self.l_Clip <= 0 then self:ReloadWeapon() return end
+
     disabletbl = disabletbl or {}
     if !disabletbl.cooldown then self.l_WeaponUseCooldown = CurTime() + weapondata.rateoffire end
     
@@ -175,7 +176,6 @@ local function DefaultRangedWeaponFire( self, wepent, target, weapondata, disabl
         self:RemoveGesture( weapondata.attackanim )
         self:AddGesture( weapondata.attackanim )
     end
-
     
     if !disabletbl.damage then
         bullettbl.Attacker = self
@@ -236,9 +236,12 @@ function ENT:UseWeapon( target )
 
 
         local ismelee = weapondata.ismelee or false
+        local iswaterproof = weapondata.waterproof or false
         local wepent = self:GetWeaponENT()
         local callback = weapondata.callback
         local result
+
+        if self:WaterLevel() > 2 and ( weapondata.islethal and !iswaterproof and !ismelee ) then self:SwitchToLethalUnderwaterWeapon() end
         
         if callback then result = callback( self, wepent, target ) end
         
@@ -383,6 +386,16 @@ end
 function ENT:SwitchToLethalWeapon()
     for k, v in RandomPairs( _LAMBDAPLAYERSWEAPONS ) do
         if v.islethal and self:CanEquipWeapon( k ) and k != self.l_Weapon and !hook.Run( "LambdaCanSwitchWeapon", self, k, v ) then
+            self:SwitchWeapon( k )
+            return
+        end
+    end
+    self:SwitchWeapon( self.l_Weapon )
+end
+
+function ENT:SwitchToLethalUnderwaterWeapon()
+    for k, v in RandomPairs( _LAMBDAPLAYERSWEAPONS ) do
+        if v.islethal and ( v.waterproof or v.ismelee ) and self:CanEquipWeapon( k ) and k != self.l_Weapon and !hook.Run( "LambdaCanSwitchWeapon", self, k, v ) then
             self:SwitchWeapon( k )
             return
         end

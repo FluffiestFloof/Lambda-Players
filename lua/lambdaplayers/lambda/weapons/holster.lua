@@ -49,6 +49,7 @@
     islethal        | Bool |        If the weapon is capable of hurting anything
     holdtype        | String |      The animation set Lambda should use. See autorun_includes/server/globals.lua and the _LAMBDAPLAYERSHoldTypeAnimations table
     ismelee         | Bool |        If the weapon is considered a melee weapon. False for ranged
+    waterproof      | Bool |        If the weapon is able to shoot underwater. True for yes
     offpos          | Vector |      The offset position of the weapon local to the Lambda's considered hand position    | OPTIONAL
     offang          | Angle |       The offset angle of the weapon local to the Lambda  | OPTIONAL
 

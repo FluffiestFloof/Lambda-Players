@@ -17,8 +17,6 @@ table.Merge( _LAMBDAPLAYERSWEAPONS, {
         holdtype = "grenade",
         bonemerge = true,
 
-        
-
         OnEquip = function( self, wepent )
 
             local nextthrow = CurTime() + rand( 1, 10 )
